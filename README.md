@@ -18,11 +18,11 @@ I envision this being most achievable as a ReactNative App that uses SQL storage
 
 ### Team Members
 
-1. **Cole Strong**
-2. **Matthew Lund**
-3. **Peter Sloan**
-4. **Nicholas Chiang**
-5. **Samuel Galbraith**
+1. **Cole Strong** (Project Manager)
+2. **Matthew Lund** (Software Architect)
+3. **Peter Sloan** (Front-End)
+4. **Nicholas Chiang** (Quality Assurance / Gatekeeper)
+5. **Samuel Galbraith** (Back-End)
 
 ### Potential Implementation
 We are planning to start with a ReactNative app using Expo, initially targeting Apple users for simplicity and wider audience range. We are discussing multiple possible databases to use that will provide us with sufficient storage and possibly provide the authentication architecture for us as well.

@@ -33,16 +33,23 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Get started
 
-1. Install dependencies
+1. Install [`node`](https://nodejs.org/en). We recommend using [`mise`](https://mise.jdx.dev/getting-started.html) to do this.
 
    ```bash
+   mise use
+   ```
+
+2. Install dependencies.
+
+   ```bash
+   corepack enable
    pnpm install
    ```
 
-2. Start the app
+3. Start the app.
 
    ```bash
-   npx expo start
+   pnpm expo start
    ```
 
 In the output, you'll find options to open the app in a

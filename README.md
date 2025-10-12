@@ -2,6 +2,15 @@
 
 Humble is Strava for weight lifting.
 
+## Design
+
+The Figma designs can be found [here](https://www.figma.com/design/YqdVdRNlAAGyS3iP0LsqBF/Humble?node-id=0-1&t=P3dm0Gs9otOFzNGC-1).
+Included below is a screenshot for convenience.
+
+![design](./designs/design.png)
+
+Individual screenshots can be found in the `/designs` directory.
+
 ## Pitch
 Share your workout journey with friends and celebrate the highs! This semester I propose we make the Strava equivalent for weightlifting. A lightweight and direct method to track and save your gym workouts and share them with friends who are also on their own workout journeys!
 

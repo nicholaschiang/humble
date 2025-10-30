@@ -1,6 +1,5 @@
-import App from "@/App";
+import Authentication from "@/components/Authentication";
 
-const Index = () => {
-  return <App />;
+export default function Index() {
+  return <Authentication />;
 }
-export default Index;

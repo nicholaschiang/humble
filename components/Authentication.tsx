@@ -1,5 +1,6 @@
-import { registerWithEmail, loginWithEmail } from "@/service/AuthService";
+import { loginWithEmail, registerWithEmail } from "@/service/AuthService";
 import { Session, User } from "@supabase/supabase-js";
+import { Href, useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   Button,
@@ -13,6 +14,7 @@ import {
 } from "react-native";
 
 const Authentication = ({ navigation }: any) => {
+  const router = useRouter(); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
@@ -38,10 +40,7 @@ const Authentication = ({ navigation }: any) => {
       setStatus('Processing...');
       await authFunction(email, password);
       setStatus(`✅ ${successMessage}`);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Welcome' }],
-      });
+      router.replace("/(tabs)" as Href);
     } catch (err: any) {
       setStatus(`❌ ${err.message}`);
     }

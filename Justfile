@@ -18,7 +18,13 @@ install *FLAGS:
 [group('core')]
 check:
     pnpm lint --fix
+    pnpm prettier --check .
     pnpm typecheck
+
+# Run code formatters
+[group('core')]
+format:
+    pnpm prettier -w .
 
 # Start the application
 [group('core')]

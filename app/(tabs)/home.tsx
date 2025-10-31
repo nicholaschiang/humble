@@ -1,5 +1,5 @@
-import { Text } from "react-native";
+import { Placeholder } from "@/components/Placeholder";
 
 export default function Home() {
-  return <Text>Home</Text>;
+  return <Placeholder>Home</Placeholder>;
 }

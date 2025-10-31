@@ -48,24 +48,30 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    mise use
    ```
 
-2. Install dependencies.
+2. Install [`just`](https://github.com/casey/just?tab=readme-ov-file#installation).
+
+   ```bash
+   cargo install just
+   ```
+
+3. Install dependencies.
 
    ```bash
    corepack enable
-   pnpm install
+   just install
    ```
 
-3. Configure environment.
+4. Configure environment.
 
    ```bash
    cp .env.example .env.local
    vim .env.local 
    ```
 
-4. Start the app.
+5. Start the app.
 
    ```bash
-   pnpm expo start
+   just start
    ```
 
 In the output, you'll find options to open the app in a
@@ -76,16 +82,6 @@ In the output, you'll find options to open the app in a
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-pnpm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
 ## Learn more
 

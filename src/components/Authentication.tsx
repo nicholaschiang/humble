@@ -7,10 +7,11 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
-  View,
 } from "react-native";
+
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
 
 export function Authentication({ navigation }: any) {
   const [email, setEmail] = useState("");
@@ -65,10 +66,10 @@ export function Authentication({ navigation }: any) {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.container}>
-          <Text style={styles.title}>Supabase Auth Test</Text>
+        <ThemedView style={styles.container}>
+          <ThemedText style={styles.title}>Supabase Auth Test</ThemedText>
 
-          <View onLayout={(e) => setEmailY(e.nativeEvent.layout.y)}>
+          <ThemedView onLayout={(e) => setEmailY(e.nativeEvent.layout.y)}>
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -78,9 +79,9 @@ export function Authentication({ navigation }: any) {
               onChangeText={setEmail}
               onFocus={() => scrollTo(emailY)}
             />
-          </View>
+          </ThemedView>
 
-          <View onLayout={(e) => setPasswordY(e.nativeEvent.layout.y)}>
+          <ThemedView onLayout={(e) => setPasswordY(e.nativeEvent.layout.y)}>
             <TextInput
               style={styles.input}
               placeholder="Password"
@@ -90,13 +91,13 @@ export function Authentication({ navigation }: any) {
               onChangeText={setPassword}
               onFocus={() => scrollTo(passwordY)}
             />
-          </View>
+          </ThemedView>
 
           <Button title="Sign Up" onPress={handleRegister} />
           <Button title="Log In" onPress={handleLogin} />
 
-          <Text style={styles.status}>{status}</Text>
-        </View>
+          <ThemedText style={styles.status}>{status}</ThemedText>
+        </ThemedView>
       </ScrollView>
     </KeyboardAvoidingView>
   );

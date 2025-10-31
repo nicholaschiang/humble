@@ -1,5 +1,5 @@
-import { Text } from "react-native";
+import { Placeholder } from "@/components/Placeholder";
 
 export default function You() {
-  return <Text>You</Text>;
+  return <Placeholder>You</Placeholder>;
 }

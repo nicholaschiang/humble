@@ -1,10 +1,12 @@
 import React from "react";
-import { Text, View } from "react-native";
 import { Link } from "expo-router";
+
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
 
 export function Welcome() {
   return (
-    <View
+    <ThemedView
       style={{
         flex: 1,
         alignItems: "center",
@@ -12,8 +14,8 @@ export function Welcome() {
         padding: 16,
       }}
     >
-      <Text>You are signed in.</Text>
+      <ThemedText>You are signed in.</ThemedText>
       <Link href="/(tabs)/home">Go to home</Link>
-    </View>
+    </ThemedView>
   );
 }

@@ -1,5 +1,5 @@
-import { Text } from "react-native";
+import { Placeholder } from "@/components/Placeholder";
 
 export default function Workout() {
-  return <Text>Workout</Text>;
+  return <Placeholder>Workout</Placeholder>;
 }

@@ -95,7 +95,7 @@ const Authentication = ({ navigation }: any) => {
           </View>
 
           <View style={styles.group}>
-            <PrimaryButton title="Register Account" onPress={handleRegister} style={{ marginBottom: theme.spacing.sm }} />
+            <PrimaryButton title="Register Account" onPress={handleRegister} />
             <PrimaryButton title="Log In" onPress={handleLogin} />
           </View>
 
@@ -132,11 +132,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     color: theme.colors.text,
     padding: 12,
-    marginBottom: theme.spacing.sm,
     borderRadius: theme.radii.sm,
   },
   group: {
-    margin: theme.spacing.sm,
+    margin: theme.spacing.md,
+    gap: theme.spacing.md,
   },
   status: {
     marginTop: 20,

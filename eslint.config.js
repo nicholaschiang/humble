@@ -6,6 +6,39 @@ const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommen
 module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
-  { rules: { "func-style": ["error", "declaration"] } },
+  {
+    rules: {
+      "func-style": ["error", "declaration"],
+      "no-restricted-exports": [
+        "error",
+        {
+          restrictDefaultExports: {
+            direct: true,
+            named: true,
+            defaultFrom: true,
+            namedFrom: true,
+            namespaceFrom: true,
+          },
+        },
+      ],
+    },
+  },
+  {
+    files: ["app/**/*.tsx"],
+    rules: {
+      "no-restricted-exports": [
+        "error",
+        {
+          restrictDefaultExports: {
+            direct: false,
+            named: true,
+            defaultFrom: true,
+            namedFrom: true,
+            namespaceFrom: true,
+          },
+        },
+      ],
+    },
+  },
   { ignores: ["dist/*"] },
 ]);

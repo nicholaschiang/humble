@@ -1,8 +1,8 @@
 import "react-native-gesture-handler";
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Welcome from "@/components/Welcome";
-import Authentication from "@/components/Authentication";
+import { Welcome } from "@/components/Welcome";
+import { Authentication } from "@/components/Authentication";
 
 const Stack = createNativeStackNavigator();
 

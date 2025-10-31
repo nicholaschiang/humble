@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 
-export default function Authentication({ navigation }: any) {
+export function Authentication({ navigation }: any) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");

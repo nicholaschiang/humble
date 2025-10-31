@@ -67,5 +67,8 @@ jobs:
       - name: Download deps
         run: pnpm install --frozen-lockfile
 
+      - name: Generate Expo route types
+        run: pnpm expo customize tsconfig.json
+
       - name: Typecheck
         run: pnpm typecheck

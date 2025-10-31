@@ -13,9 +13,9 @@ import {
 } from "react-native";
 
 const Authentication = ({ navigation }: any) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [status, setStatus] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState("");
 
   const scrollRef = useRef<ScrollView>(null);
   const [emailY, setEmailY] = useState(0);
@@ -30,17 +30,18 @@ const Authentication = ({ navigation }: any) => {
 
   async function handleAuth(
     authFunction: (
-      email: string, password: string
-    ) => Promise<{ user: User | null, session: Session | null }>,
+      email: string,
+      password: string,
+    ) => Promise<{ user: User | null; session: Session | null }>,
     successMessage: string,
   ) {
     try {
-      setStatus('Processing...');
+      setStatus("Processing...");
       await authFunction(email, password);
       setStatus(`✅ ${successMessage}`);
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Welcome' }],
+        routes: [{ name: "Welcome" }],
       });
     } catch (err: any) {
       setStatus(`❌ ${err.message}`);
@@ -48,16 +49,16 @@ const Authentication = ({ navigation }: any) => {
   }
 
   async function handleRegister() {
-    await handleAuth(registerWithEmail, 'Account created!');
+    await handleAuth(registerWithEmail, "Account created!");
   }
   async function handleLogin() {
-    await handleAuth(loginWithEmail, 'Logged in!');
+    await handleAuth(loginWithEmail, "Logged in!");
   }
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
         ref={scrollRef}
@@ -99,7 +100,7 @@ const Authentication = ({ navigation }: any) => {
       </ScrollView>
     </KeyboardAvoidingView>
   );
-}
+};
 
 export default Authentication;
 
@@ -109,24 +110,24 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 24,
   },
   title: {
     fontSize: 22,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
     marginBottom: 16,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#3a3a3aff',
+    borderColor: "#3a3a3aff",
     padding: 10,
     marginVertical: 8,
     borderRadius: 8,
   },
   status: {
     marginTop: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

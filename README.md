@@ -55,7 +55,14 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    pnpm install
    ```
 
-3. Start the app.
+3. Configure environment.
+
+   ```bash
+   cp .env.example .env.local
+   vim .env.local 
+   ```
+
+4. Start the app.
 
    ```bash
    pnpm expo start

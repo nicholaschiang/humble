@@ -26,6 +26,19 @@ export const loginWithEmail = async (email: string, password: string) => {
   return data;
 };
 
+export const loginWithEmail = async (email: string, password: string) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+  if (error) {
+    console.error('Error signing in:', error);
+    throw error;
+  }
+  console.log('Signed in!');
+  return data;
+};
+
 export const logout = async () => {
   const { error } = await supabase.auth.signOut();
   if (error) {

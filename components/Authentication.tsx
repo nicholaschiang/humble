@@ -11,7 +11,9 @@ import {
   TextInput,
   View,
 } from "react-native";
+import Group from './ui/Group';
 import PrimaryButton from './ui/PrimaryButton';
+import HumbleH from './ui/HumbleH';
 
 const Authentication = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
@@ -66,9 +68,11 @@ const Authentication = ({ navigation }: any) => {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.container}>
-          <Text style={styles.title}>Humble</Text>
+          <Text style={styles.title}>
+            <HumbleH fontSize={theme.fonts.sizes.title} />umble
+          </Text>
 
-          <View style={styles.group}>
+          <Group gap={theme.spacing.md}>
             <View onLayout={(e) => setEmailY(e.nativeEvent.layout.y)}>
               <TextInput
                 style={styles.input}
@@ -92,12 +96,12 @@ const Authentication = ({ navigation }: any) => {
                 onFocus={() => scrollTo(passwordY)}
               />
             </View>
-          </View>
+          </Group>
 
-          <View style={styles.group}>
+          <Group direction='column' gap={theme.spacing.md}>
             <PrimaryButton title="Register Account" onPress={handleRegister} />
             <PrimaryButton title="Log In" onPress={handleLogin} />
-          </View>
+          </Group>
 
           <Text style={styles.status}>{status}</Text>
         </View>
@@ -117,10 +121,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: theme.spacing.lg,
     backgroundColor: theme.colors.background,
+    gap: theme.spacing.xl,
   },
   title: {
     fontSize: theme.fonts.sizes.title,
-    fontWeight: theme.fonts.weights.bold as any,
+    fontWeight: theme.fonts.weights.bold,
     textAlign: 'center',
     marginBottom: theme.spacing.md,
     color: theme.colors.text,
@@ -133,10 +138,6 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
     padding: 12,
     borderRadius: theme.radii.sm,
-  },
-  group: {
-    margin: theme.spacing.md,
-    gap: theme.spacing.md,
   },
   status: {
     marginTop: 20,

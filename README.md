@@ -40,11 +40,11 @@ I envision this being most achievable as a ReactNative App that uses SQL storage
 
 We are planning to start with a ReactNative app using Expo, initially targeting Apple users for simplicity and wider audience range. We are discussing multiple possible databases to use that will provide us with sufficient storage and possibly provide the authentication architecture for us as well.
 
-## Welcome to your Expo app 👋
+## Expo
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Get started
+### Get started
 
 1. Install [`node`](https://nodejs.org/en). We recommend using [`mise`](https://mise.jdx.dev/getting-started.html) to do this.
 
@@ -87,16 +87,44 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Learn more
+### Learn more
 
 To learn more about developing your project with Expo, look at the following resources:
 
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-## Join the community
+### Join the community
 
 Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Database
+
+We use Supabase for [authentication](https://supabase.com/docs/guides/auth) and a Postgres structured [database](https://supabase.com/docs/guides/database/overview).
+
+1. Login to the Supabase CLI.
+
+   ```bash
+   just login
+   ```
+
+2. Link the Supabase project.
+
+   ```bash
+   just link
+   ```
+
+3. [Generate](https://supabase.com/docs/guides/api/rest/generating-types#generating-types-using-supabase-cli) the latest database schema types.
+
+   ```bash
+   just gen
+   ```
+
+To view all commands provided by our `Justfile` recipes, you can simply run:
+
+```bash
+just
+```

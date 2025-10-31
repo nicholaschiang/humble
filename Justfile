@@ -30,3 +30,25 @@ format:
 [group('core')]
 start:
     pnpm start
+
+# Login to the Supabase CLI
+[group('database')]
+login:
+    pnpm supabase login
+
+# Link your Supabase project
+[group('database')]
+link:
+    pnpm supabase link
+
+# Generate schema types from the linked project
+[group('database')]
+gen:
+    pnpm supabase gen types typescript --linked --schema public > src/lib/database.types.ts
+    pnpm prettier -w src/lib/database.types.ts
+
+# Generate schema types from the local dev database
+[group('database')]
+gen-local:
+    pnpm supabase gen types typescript --local --schema public > src/lib/database.types.ts
+    pnpm prettier -w src/lib/database.types.ts

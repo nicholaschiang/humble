@@ -8,15 +8,28 @@ type Props = {
   style?: ViewStyle;
   textStyle?: TextStyle;
   disabled?: boolean;
+  expand?: boolean;
 };
 
-export default function PrimaryButton({ title, onPress, style, textStyle, disabled }: Props) {
+export default function PrimaryButton({
+  title,
+  onPress,
+  style,
+  textStyle,
+  disabled,
+  expand
+}: Props) {
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.85}
       disabled={disabled}
-      style={[styles.button, style, disabled && styles.buttonDisabled]}
+      style={[
+        styles.button,
+        expand && styles.expand,
+        style,
+        disabled && styles.buttonDisabled
+      ]}
     >
       <Text style={[styles.text, textStyle]}>{title}</Text>
     </TouchableOpacity>
@@ -36,6 +49,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 3,
+  },
+  expand: {
+    flex: 1, // Allow the button to expand
   },
   buttonDisabled: {
     opacity: 0.6,

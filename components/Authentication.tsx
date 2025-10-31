@@ -1,8 +1,8 @@
-import { registerWithEmail, loginWithEmail } from "@/service/AuthService";
+import theme from '@/constants/theme';
+import { loginWithEmail, registerWithEmail } from "@/service/AuthService";
 import { Session, User } from "@supabase/supabase-js";
 import React, { useRef, useState } from "react";
 import {
-  Button,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -11,6 +11,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import PrimaryButton from './ui/PrimaryButton';
 
 const Authentication = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
@@ -56,7 +57,7 @@ const Authentication = ({ navigation }: any) => {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -65,34 +66,38 @@ const Authentication = ({ navigation }: any) => {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.container}>
-          <Text style={styles.title}>Supabase Auth Test</Text>
+          <Text style={styles.title}>Humble</Text>
 
-          <View onLayout={(e) => setEmailY(e.nativeEvent.layout.y)}>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#555"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={setEmail}
-              onFocus={() => scrollTo(emailY)}
-            />
+          <View style={styles.group}>
+            <View onLayout={(e) => setEmailY(e.nativeEvent.layout.y)}>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor={theme.colors.mutedText}
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+                onFocus={() => scrollTo(emailY)}
+              />
+            </View>
+
+            <View onLayout={(e) => setPasswordY(e.nativeEvent.layout.y)}>
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor={theme.colors.mutedText}
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+                onFocus={() => scrollTo(passwordY)}
+              />
+            </View>
           </View>
 
-          <View onLayout={(e) => setPasswordY(e.nativeEvent.layout.y)}>
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#555"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-              onFocus={() => scrollTo(passwordY)}
-            />
+          <View style={styles.group}>
+            <PrimaryButton title="Register Account" onPress={handleRegister} style={{ marginBottom: theme.spacing.sm }} />
+            <PrimaryButton title="Log In" onPress={handleLogin} />
           </View>
-
-          <Button title="Sign Up" onPress={handleRegister} />
-          <Button title="Log In" onPress={handleLogin} />
 
           <Text style={styles.status}>{status}</Text>
         </View>
@@ -110,23 +115,32 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 24,
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.background,
   },
   title: {
-    fontSize: 22,
-    fontWeight: '600',
+    fontSize: theme.fonts.sizes.title,
+    fontWeight: theme.fonts.weights.bold as any,
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
+    color: theme.colors.text,
+    fontFamily: theme.fonts.fontFamily,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#3a3a3aff',
-    padding: 10,
-    marginVertical: 8,
-    borderRadius: 8,
+    borderColor: theme.colors.inputBorder,
+    backgroundColor: theme.colors.surface,
+    color: theme.colors.text,
+    padding: 12,
+    marginBottom: theme.spacing.sm,
+    borderRadius: theme.radii.sm,
+  },
+  group: {
+    margin: theme.spacing.sm,
   },
   status: {
     marginTop: 20,
     textAlign: 'center',
+    color: theme.colors.text,
   },
 });

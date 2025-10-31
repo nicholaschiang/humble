@@ -1,4 +1,4 @@
-import { registerWithEmail, loginWithEmail } from "@/src/service/AuthService";
+import { registerWithEmail, loginWithEmail } from "@/service/AuthService";
 import { Session, User } from "@supabase/supabase-js";
 import React, { useRef, useState } from "react";
 import {

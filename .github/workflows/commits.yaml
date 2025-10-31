@@ -1,0 +1,16 @@
+name: Commits
+on: [push]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Check
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Conventional commits check
+        uses: cocogitto/cocogitto-action@v4
+        with:
+          command: check

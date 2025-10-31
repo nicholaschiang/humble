@@ -21,7 +21,7 @@ const App = () => {
       <Stack.Screen
         name="Welcome"
         component={Welcome}
-        options={{ title: 'Verify Email' }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

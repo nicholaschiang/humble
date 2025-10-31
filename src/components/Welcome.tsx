@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-const Welcome = () => {
+export default function Welcome() {
   return (
     <View
       style={{
@@ -14,6 +14,4 @@ const Welcome = () => {
       <Text>You are signed in.</Text>
     </View>
   );
-};
-
-export default Welcome;
+}

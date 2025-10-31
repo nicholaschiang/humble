@@ -6,5 +6,6 @@ const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommen
 module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
+  { rules: { "func-style": ["error", "declaration"] } },
   { ignores: ["dist/*"] },
 ]);

@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 
-const Authentication = ({ navigation }: any) => {
+export default function Authentication({ navigation }: any) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");
@@ -21,12 +21,12 @@ const Authentication = ({ navigation }: any) => {
   const [emailY, setEmailY] = useState(0);
   const [passwordY, setPasswordY] = useState(0);
 
-  const scrollTo = (y: number) => {
+  function scrollTo(y: number) {
     const offset = Math.max(y - 24, 0);
     requestAnimationFrame(() => {
       scrollRef.current?.scrollTo({ y: offset, animated: true });
     });
-  };
+  }
 
   async function handleAuth(
     authFunction: (
@@ -100,9 +100,7 @@ const Authentication = ({ navigation }: any) => {
       </ScrollView>
     </KeyboardAvoidingView>
   );
-};
-
-export default Authentication;
+}
 
 const styles = StyleSheet.create({
   scrollContent: {

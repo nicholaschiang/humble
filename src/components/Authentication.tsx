@@ -1,17 +1,20 @@
-import { registerWithEmail, loginWithEmail } from "@/service/AuthService";
+import { Spaces } from "@/constants/theme";
+import { loginWithEmail, registerWithEmail } from "@/service/AuthService";
 import { Session, User } from "@supabase/supabase-js";
 import React, { useRef, useState } from "react";
 import {
-  Button,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
+  Text,
   TextInput,
+  View,
 } from "react-native";
-
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
+import { Group } from "@/components/Group";
+import { Button } from "@/components/Button";
+import { Humble } from "@/components/Humble";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 export function Authentication({ navigation }: any) {
   const [email, setEmail] = useState("");
@@ -56,9 +59,11 @@ export function Authentication({ navigation }: any) {
     await handleAuth(loginWithEmail, "Logged in!");
   }
 
+  const colors = useThemeColors();
+
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: colors.background }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
@@ -66,38 +71,39 @@ export function Authentication({ navigation }: any) {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <ThemedView style={styles.container}>
-          <ThemedText style={styles.title}>Supabase Auth Test</ThemedText>
+        <View style={styles.container}>
+          <Humble type="title" />
+          <Group gap={Spaces.md}>
+            <View onLayout={(e) => setEmailY(e.nativeEvent.layout.y)}>
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor={colors.text}
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+                onFocus={() => scrollTo(emailY)}
+              />
+            </View>
 
-          <ThemedView onLayout={(e) => setEmailY(e.nativeEvent.layout.y)}>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#555"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={setEmail}
-              onFocus={() => scrollTo(emailY)}
-            />
-          </ThemedView>
+            <View onLayout={(e) => setPasswordY(e.nativeEvent.layout.y)}>
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor={colors.text}
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+                onFocus={() => scrollTo(passwordY)}
+              />
+            </View>
+          </Group>
 
-          <ThemedView onLayout={(e) => setPasswordY(e.nativeEvent.layout.y)}>
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#555"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-              onFocus={() => scrollTo(passwordY)}
-            />
-          </ThemedView>
+          <Group direction="column" gap={Spaces.md}>
+            <Button title="Register Account" onPress={handleRegister} />
+            <Button title="Log In" onPress={handleLogin} />
+          </Group>
 
-          <Button title="Sign Up" onPress={handleRegister} />
-          <Button title="Log In" onPress={handleLogin} />
-
-          <ThemedText style={styles.status}>{status}</ThemedText>
-        </ThemedView>
+          <Text style={styles.status}>{status}</Text>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -110,20 +116,8 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 24,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#3a3a3aff",
-    padding: 10,
-    marginVertical: 8,
-    borderRadius: 8,
+    padding: Spaces.lg,
+    gap: Spaces.xl,
   },
   status: {
     marginTop: 20,

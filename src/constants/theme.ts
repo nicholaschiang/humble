@@ -8,6 +8,20 @@ import { Platform } from "react-native";
 const tintColorLight = "#0a7ea4";
 const tintColorDark = "#fff";
 
+export const Spaces = {
+  xs: 6,
+  sm: 10,
+  md: 16,
+  lg: 24,
+  xl: 32,
+};
+
+export const Radiuses = {
+  sm: 6,
+  md: 10,
+  lg: 14,
+};
+
 export const Colors = {
   light: {
     text: "#11181C",

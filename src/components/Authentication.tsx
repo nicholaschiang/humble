@@ -1,4 +1,3 @@
-import { Spaces } from "@/constants/theme";
 import { loginWithEmail, registerWithEmail } from "@/service/AuthService";
 import { Session, User } from "@supabase/supabase-js";
 import React, { useRef, useState } from "react";
@@ -6,12 +5,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
-import { Group } from "@/components/Group";
 import { Button } from "@/components/Button";
 import { Humble } from "@/components/Humble";
 import { useThemeColors } from "@/hooks/useThemeColors";
@@ -66,14 +63,10 @@ export function Authentication({ navigation }: any) {
       style={{ flex: 1, backgroundColor: colors.background }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView
-        ref={scrollRef}
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.container}>
+      <ScrollView ref={scrollRef} keyboardShouldPersistTaps="handled">
+        <View>
           <Humble type="title" />
-          <Group gap={Spaces.md}>
+          <View className="flex flex-col gap-2">
             <View onLayout={(e) => setEmailY(e.nativeEvent.layout.y)}>
               <TextInput
                 placeholder="Email"
@@ -84,7 +77,6 @@ export function Authentication({ navigation }: any) {
                 onFocus={() => scrollTo(emailY)}
               />
             </View>
-
             <View onLayout={(e) => setPasswordY(e.nativeEvent.layout.y)}>
               <TextInput
                 placeholder="Password"
@@ -95,32 +87,14 @@ export function Authentication({ navigation }: any) {
                 onFocus={() => scrollTo(passwordY)}
               />
             </View>
-          </Group>
-
-          <Group direction="column" gap={Spaces.md}>
+          </View>
+          <View className="flex flex-col gap-2">
             <Button title="Register Account" onPress={handleRegister} />
             <Button title="Log In" onPress={handleLogin} />
-          </Group>
-
-          <Text style={styles.status}>{status}</Text>
+          </View>
+          <Text>{status}</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContent: {
-    flexGrow: 1,
-  },
-  container: {
-    flexGrow: 1,
-    justifyContent: "center",
-    padding: Spaces.lg,
-    gap: Spaces.xl,
-  },
-  status: {
-    marginTop: 20,
-    textAlign: "center",
-  },
-});

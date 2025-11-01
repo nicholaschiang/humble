@@ -14,6 +14,11 @@ upgrade:
 install *FLAGS:
     pnpm install {{FLAGS}}
 
+# Add a new dependency, ensuring Expo compatibility
+[group('core')]
+add *FLAGS:
+    pnpm expo install {{FLAGS}}
+
 # Run all enforced linters
 [group('core')]
 check:

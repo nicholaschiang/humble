@@ -22,7 +22,7 @@ add *FLAGS:
 # Run all enforced linters
 [group('core')]
 check:
-    pnpm lint --fix
+    pnpm lint --max-warnings 0 --fix
     pnpm prettier --check .
     pnpm typecheck
 

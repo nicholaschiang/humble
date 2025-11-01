@@ -1,14 +1,11 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
-
+import { PortalHost } from "@rn-primitives/portal";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { NAV_THEME, DEFAULT_COLOR_SCHEME } from "@/lib/theme";
 
+import "react-native-reanimated";
 import "@/global.css";
 
 export const unstable_settings = {
@@ -16,14 +13,14 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
+  const colorScheme = useColorScheme() ?? DEFAULT_COLOR_SCHEME;
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={NAV_THEME[colorScheme]}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
+      <PortalHost />
     </ThemeProvider>
   );
 }

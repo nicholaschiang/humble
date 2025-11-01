@@ -1,2 +1,3 @@
 onlyBuiltDependencies:
-  - supabase
+  - "supabase"
+  - "@react-native-reusables/cli"

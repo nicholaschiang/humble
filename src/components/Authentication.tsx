@@ -9,9 +9,8 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Button } from "@/components/Button";
+import { Button } from "@/components/ui/button";
 import { Humble } from "@/components/Humble";
-import { useThemeColors } from "@/hooks/useThemeColors";
 
 export function Authentication({ navigation }: any) {
   const [email, setEmail] = useState("");
@@ -56,21 +55,17 @@ export function Authentication({ navigation }: any) {
     await handleAuth(loginWithEmail, "Logged in!");
   }
 
-  const colors = useThemeColors();
-
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: colors.background }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView ref={scrollRef} keyboardShouldPersistTaps="handled">
         <View>
-          <Humble type="title" />
+          <Humble />
           <View className="flex flex-col gap-2">
             <View onLayout={(e) => setEmailY(e.nativeEvent.layout.y)}>
               <TextInput
                 placeholder="Email"
-                placeholderTextColor={colors.text}
                 autoCapitalize="none"
                 value={email}
                 onChangeText={setEmail}
@@ -80,7 +75,6 @@ export function Authentication({ navigation }: any) {
             <View onLayout={(e) => setPasswordY(e.nativeEvent.layout.y)}>
               <TextInput
                 placeholder="Password"
-                placeholderTextColor={colors.text}
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}
@@ -89,8 +83,8 @@ export function Authentication({ navigation }: any) {
             </View>
           </View>
           <View className="flex flex-col gap-2">
-            <Button title="Register Account" onPress={handleRegister} />
-            <Button title="Log In" onPress={handleLogin} />
+            <Button onPress={handleRegister}>Register account</Button>
+            <Button onPress={handleLogin}>Login</Button>
           </View>
           <Text>{status}</Text>
         </View>

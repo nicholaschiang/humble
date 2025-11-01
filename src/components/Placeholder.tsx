@@ -1,17 +1,9 @@
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { Text, View } from "react-native";
 
 export function Placeholder({ children }: { children: string }) {
   return (
-    <ThemedView
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%",
-      }}
-    >
-      <ThemedText>{children}</ThemedText>
-    </ThemedView>
+    <View className="flex items-center justify-center h-full">
+      <Text>{children}</Text>
+    </View>
   );
 }

@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient } from "@supabase/supabase-js";
 import { type Database } from "@/lib/database.types";
+import { Platform } from "react-native";
 
 if (process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY === undefined)
   throw new Error(
@@ -18,7 +19,7 @@ export const supabase = createClient<Database>(
     auth: {
       storage: AsyncStorage,
       autoRefreshToken: true,
-      persistSession: true,
+      persistSession: Platform.OS === "web" ? false : true,
       detectSessionInUrl: false,
     },
   },

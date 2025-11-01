@@ -1,22 +1,19 @@
 import { faDumbbell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { ThemedText, ThemedTextProps } from "@/components/ThemedText";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { Text } from "react-native";
 
-export function Humble({ type }: Pick<ThemedTextProps, "type">) {
-  const color = useThemeColor({}, "text");
+export function Humble() {
   return (
-    <ThemedText type={type}>
+    <Text>
       <FontAwesomeIcon
         icon={faDumbbell}
         style={{
           transform: [{ scaleY: 1.2 }],
           marginHorizontal: 2,
           marginBottom: -4,
-          color,
         }}
       />
       umble
-    </ThemedText>
+    </Text>
   );
 }

@@ -36,6 +36,16 @@ format:
 start:
     pnpm start
 
+# Check components are setup correctly
+[group('components')]
+check-components:
+    pnpm dlx @react-native-reusables/cli@latest doctor
+
+# Add a new component, see https://reactnativereusables.com
+[group('components')]
+add-component *COMPONENTS:
+    pnpm dlx @react-native-reusables/cli@latest add {{COMPONENTS}}
+
 # Login to the Supabase CLI
 [group('database')]
 login:

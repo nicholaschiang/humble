@@ -2,15 +2,15 @@ name: Commits
 on: [push]
 
 jobs:
-  check:
+  verify:
     runs-on: ubuntu-latest
-    name: Check
+    name: Verify commits
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Conventional commits check
+      - name: Verify commit format (if this fails, ensure your commits follow https://conventionalcommits.org)
         uses: cocogitto/cocogitto-action@v4
         with:
           command: check

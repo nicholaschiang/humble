@@ -19,17 +19,25 @@ install *FLAGS:
 add *FLAGS:
     pnpm expo install {{FLAGS}}
 
+# Generate Expo types
+[group('core')]
+gen-types:
+    pnpm expo customize tsconfig.json
+
 # Run all enforced linters
 [group('core')]
 check:
     pnpm lint --max-warnings 0 --fix
-    pnpm prettier --check .
     pnpm typecheck
 
 # Run code formatters
 [group('core')]
 format:
-    pnpm prettier -w .
+    pnpm prettier -wl .
+
+# Run all fixers
+[group('core')]
+fix: format check
 
 # Start the application
 [group('core')]

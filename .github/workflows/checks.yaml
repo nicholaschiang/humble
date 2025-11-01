@@ -6,8 +6,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Lint
+  checks:
+    name: Run all checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -15,6 +15,9 @@ jobs:
         with:
           fetch-depth: 1
           lfs: false
+
+      - name: Setup just
+        uses: taiki-e/install-action@just
 
       - name: Get package manager version
         id: get-pnpm-version
@@ -33,74 +36,15 @@ jobs:
           cache: pnpm
 
       - name: Download deps
-        run: pnpm install --frozen-lockfile
+        run: just install --frozen-lockfile
 
-      - name: Lint (if this fails run pnpm lint --fix)
-        run: pnpm lint
+      - name: Generate Expo types
+        run: just gen-types
 
-  style:
-    name: Style
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1
-          lfs: false
+      - name: Run all checks (if this fails, run just fix)
+        run: |
+          just format
+          just check
 
-      - name: Get package manager version
-        id: get-pnpm-version
-        run: echo "version=$(cat package.json | jq -r .packageManager | sed s/pnpm@//)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ steps.get-pnpm-version.outputs.version }}
-
-      - name: Setup node
-        uses: actions/setup-node@v6
-        with:
-          node-version-file: package.json
-          cache-dependency-path: pnpm-lock.yaml
-          cache: pnpm
-
-      - name: Download deps
-        run: pnpm install --frozen-lockfile
-
-      - name: Check code style (if this fails run just format)
-        run: pnpm prettier --check .
-
-  typecheck:
-    name: Typecheck
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1
-          lfs: false
-
-      - name: Get package manager version
-        id: get-pnpm-version
-        run: echo "version=$(cat package.json | jq -r .packageManager | sed s/pnpm@//)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ steps.get-pnpm-version.outputs.version }}
-
-      - name: Setup node
-        uses: actions/setup-node@v6
-        with:
-          node-version-file: package.json
-          cache-dependency-path: pnpm-lock.yaml
-          cache: pnpm
-
-      - name: Download deps
-        run: pnpm install --frozen-lockfile
-
-      - name: Generate Expo route types
-        run: pnpm expo customize tsconfig.json
-
-      - name: Typecheck
-        run: pnpm typecheck
+          # Exit code 1 if differences were found
+          git diff --exit-code

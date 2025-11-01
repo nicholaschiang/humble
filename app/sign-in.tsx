@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { Alert, View } from "react-native";
+import { Alert } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { router } from "expo-router";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
+import {
+  FormActions,
+  FormField,
+  FormContainer,
+} from "@/components/FormContainer";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -48,18 +52,16 @@ export default function SignIn() {
   }
 
   return (
-    <View className="flex flex-col gap-4 h-full justify-center p-4 bg-background">
-      <View className="flex gap-1">
-        <Label>Email</Label>
+    <FormContainer>
+      <FormField label="Email">
         <Input
           onChangeText={(text) => setEmail(text)}
           value={email}
           placeholder="email@address.com"
           autoCapitalize={"none"}
         />
-      </View>
-      <View className="flex gap-1">
-        <Label>Password</Label>
+      </FormField>
+      <FormField label="Password">
         <Input
           onChangeText={(text) => setPassword(text)}
           value={password}
@@ -67,8 +69,8 @@ export default function SignIn() {
           placeholder="Password"
           autoCapitalize={"none"}
         />
-      </View>
-      <View className="flex gap-4 mt-4">
+      </FormField>
+      <FormActions>
         <Button disabled={loading} onPress={() => signInWithEmail()}>
           <Text>Sign in</Text>
         </Button>
@@ -79,7 +81,7 @@ export default function SignIn() {
         >
           <Text>Create account</Text>
         </Button>
-      </View>
-    </View>
+      </FormActions>
+    </FormContainer>
   );
 }

@@ -1,10 +1,14 @@
 import { useCallback, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { View, Alert } from "react-native";
+import { Alert } from "react-native";
 import { Session } from "@supabase/supabase-js";
+import {
+  FormActions,
+  FormField,
+  FormContainer,
+} from "@/components/FormContainer";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 
@@ -84,33 +88,29 @@ export function Account({ session }: { session: Session }) {
   }, [session, getProfile]);
 
   return (
-    <View className="flex flex-col gap-4 h-full justify-center p-4 bg-background">
-      <View className="flex gap-1">
-        <Label>Email</Label>
+    <FormContainer>
+      <FormField label="Email">
         <Input value={session?.user?.email} readOnly />
-      </View>
-      <View className="flex gap-1">
-        <Label>Username</Label>
+      </FormField>
+      <FormField label="Username">
         <Input
           value={username || ""}
           onChangeText={(text) => setUsername(text)}
         />
-      </View>
-      <View className="flex gap-1">
-        <Label>First name</Label>
+      </FormField>
+      <FormField label="First name">
         <Input
           value={firstName ?? ""}
           onChangeText={(text) => setFirstName(text)}
         />
-      </View>
-      <View className="flex gap-1">
-        <Label>Last name</Label>
+      </FormField>
+      <FormField label="Last name">
         <Input
           value={lastName ?? ""}
           onChangeText={(text) => setLastName(text)}
         />
-      </View>
-      <View className="flex gap-4 mt-4">
+      </FormField>
+      <FormActions>
         <Button
           onPress={() => updateProfile({ username, firstName, lastName })}
           disabled={loading}
@@ -120,7 +120,7 @@ export function Account({ session }: { session: Session }) {
         <Button variant="outline" onPress={() => supabase.auth.signOut()}>
           <Text>Sign out</Text>
         </Button>
-      </View>
-    </View>
+      </FormActions>
+    </FormContainer>
   );
 }

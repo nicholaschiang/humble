@@ -3,7 +3,7 @@ import { Text } from "@/components/ui/text";
 
 export function Placeholder({ children }: { children: string }) {
   return (
-    <View className="bg-background flex items-center justify-center h-full">
+    <View className="bg-background flex items-center justify-center h-full w-full">
       <Text>{children}</Text>
     </View>
   );

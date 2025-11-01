@@ -45,7 +45,7 @@ export default function RootLayout() {
 function RootNavigator() {
   const { session } = useSessionState();
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(tabs)" />
       </Stack.Protected>

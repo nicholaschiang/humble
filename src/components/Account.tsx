@@ -84,7 +84,7 @@ export function Account({ session }: { session: Session }) {
   }, [session, getProfile]);
 
   return (
-    <View className="flex flex-col gap-4 h-full justify-center p-4">
+    <View className="flex flex-col gap-4 h-full justify-center p-4 bg-background">
       <View className="flex gap-1">
         <Label>Email</Label>
         <Input value={session?.user?.email} readOnly />
@@ -117,7 +117,7 @@ export function Account({ session }: { session: Session }) {
         >
           <Text>{loading ? "Loading ..." : "Update"}</Text>
         </Button>
-        <Button onPress={() => supabase.auth.signOut()}>
+        <Button variant="outline" onPress={() => supabase.auth.signOut()}>
           <Text>Sign out</Text>
         </Button>
       </View>

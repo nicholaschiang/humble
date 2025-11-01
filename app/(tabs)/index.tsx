@@ -1,7 +1,5 @@
-import { Account } from "@/components/Account";
-import { useSession } from "@/lib/session";
+import { Placeholder } from "@/components/Placeholder";
 
 export default function Home() {
-  const session = useSession();
-  return <Account session={session} />;
+  return <Placeholder>Home</Placeholder>;
 }

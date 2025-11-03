@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 export async function createGymVisit(
   visit: Omit<TablesInsert<"GymVisit">, "id" | "created_at" | "user_id"> & {
     user_id: string;
-  }
+  },
 ) {
   const { data, error } = await supabase
     .from("GymVisit")
@@ -57,7 +57,7 @@ export async function getGymVisitsByUser(userId: string) {
 
 export async function updateGymVisit(
   id: string,
-  updates: TablesUpdate<"GymVisit">
+  updates: TablesUpdate<"GymVisit">,
 ) {
   const { data, error } = await supabase
     .from("GymVisit")
@@ -92,7 +92,7 @@ export async function deleteGymVisit(id: string): Promise<void> {
 
 // Exercise CRUD operations
 export async function createExercise(
-  exercise: Omit<TablesInsert<"Exercise">, "id" | "created_at">
+  exercise: Omit<TablesInsert<"Exercise">, "id" | "created_at">,
 ) {
   const { data, error } = await supabase
     .from("Exercise")
@@ -145,7 +145,7 @@ export async function getExercisesByGymVisit(gymVisitId: string) {
 
 export async function updateExercise(
   id: string,
-  updates: TablesUpdate<"Exercise">
+  updates: TablesUpdate<"Exercise">,
 ) {
   const { data, error } = await supabase
     .from("Exercise")
@@ -180,7 +180,7 @@ export async function deleteExercise(id: string): Promise<void> {
 
 // Set CRUD operations
 export async function createSet(
-  set: Omit<TablesInsert<"Set">, "id" | "created_at">
+  set: Omit<TablesInsert<"Set">, "id" | "created_at">,
 ) {
   const { data, error } = await supabase
     .from("Set")
@@ -299,7 +299,7 @@ export async function createExerciseType(
     "id" | "created_at" | "author_id"
   > & {
     author_id: string;
-  }
+  },
 ) {
   const { data, error } = await supabase
     .from("ExerciseType")

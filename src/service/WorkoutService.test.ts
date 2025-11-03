@@ -64,7 +64,7 @@ describe("WorkoutService", () => {
         })) as any;
 
         await expect(
-          WorkoutService.createGymVisit({ notes: "Test", user_id: "user-123" })
+          WorkoutService.createGymVisit({ notes: "Test", user_id: "user-123" }),
         ).rejects.toThrow("Failed to create visit");
       });
     });

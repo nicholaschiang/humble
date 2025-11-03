@@ -50,32 +50,11 @@ export default function Workout() {
     distance_mi: "",
   });
 
-  // Load exercises when gym visit is active
-  useEffect(() => {
-    if (gymVisit) {
-      loadExercises();
-    }
-  }, [gymVisit]);
-
-  // Load sets when exercises change
-  useEffect(() => {
-    if (exercises.length > 0) {
-      exercises.forEach((exercise) => {
-        loadSets(exercise.id);
-      });
-    }
-  }, [exercises]);
-
-  // Load exercise types
-  useEffect(() => {
-    loadExerciseTypes();
-  }, []);
-
   const loadExerciseTypes = useCallback(async () => {
     try {
       const types = await getExerciseTypes();
       setExerciseTypes(types);
-    } catch (error) {
+    } catch {
       // Failed to load exercise types
     }
   }, []);
@@ -85,7 +64,7 @@ export default function Workout() {
     try {
       const exs = await getExercisesByGymVisit(gymVisit.id);
       setExercises(exs);
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to load exercises");
     }
   }, [gymVisit]);
@@ -97,10 +76,31 @@ export default function Workout() {
         ...prev,
         [exerciseId]: sets,
       }));
-    } catch (error) {
+    } catch {
       // Failed to load sets
     }
   }, []);
+
+  // Load exercises when gym visit is active
+  useEffect(() => {
+    if (gymVisit) {
+      loadExercises();
+    }
+  }, [gymVisit, loadExercises]);
+
+  // Load sets when exercises change
+  useEffect(() => {
+    if (exercises.length > 0) {
+      exercises.forEach((exercise) => {
+        loadSets(exercise.id);
+      });
+    }
+  }, [exercises, loadSets]);
+
+  // Load exercise types
+  useEffect(() => {
+    loadExerciseTypes();
+  }, [loadExerciseTypes]);
 
   const handleStartGymVisit = useCallback(async () => {
     if (!session?.user?.id) return;
@@ -111,14 +111,14 @@ export default function Workout() {
         user_id: session.user.id,
       });
       setGymVisit(visit);
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to start gym visit");
     } finally {
       setLoading(false);
     }
   }, [session]);
 
-  const handleToggleExercise = (exerciseId: string) => {
+  function handleToggleExercise(exerciseId: string) {
     setExpandedExercises((prev: Set<string>) => {
       const newSet = new Set(prev);
       if (newSet.has(exerciseId)) {
@@ -128,9 +128,9 @@ export default function Workout() {
       }
       return newSet;
     });
-  };
+  }
 
-  const handleAddExercise = async () => {
+  async function handleAddExercise() {
     if (!gymVisit || !selectedExerciseTypeId) return;
     try {
       setLoading(true);
@@ -142,19 +142,19 @@ export default function Workout() {
       setShowAddExercise(false);
       setShowExerciseTypeSelector(false);
       setSelectedExerciseTypeId(null);
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to add exercise");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleSelectExerciseType = (typeId: string) => {
+  function handleSelectExerciseType(typeId: string) {
     setSelectedExerciseTypeId(typeId);
     setShowExerciseTypeSelector(false);
-  };
+  }
 
-  const handleCreateExerciseType = async () => {
+  async function handleCreateExerciseType() {
     if (!newExerciseTypeName.trim()) {
       Alert.alert("Error", "Please enter an exercise type name");
       return;
@@ -174,14 +174,14 @@ export default function Workout() {
       setSelectedExerciseTypeId(newType.id);
       setNewExerciseTypeName("");
       setShowNewExerciseType(false);
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to create exercise type");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleAddSet = (exerciseId: string) => {
+  function handleAddSet(exerciseId: string) {
     setEditingSet({ setId: null, exerciseId });
     setEditSetForm({
       reps: "",
@@ -189,9 +189,9 @@ export default function Workout() {
       duration_sec: "",
       distance_mi: "",
     });
-  };
+  }
 
-  const handleEditSet = (set: SetRow, exerciseId: string) => {
+  function handleEditSet(set: SetRow, exerciseId: string) {
     setEditingSet({ setId: set.id, exerciseId });
     setEditSetForm({
       reps: set.reps?.toString() || "",
@@ -199,9 +199,9 @@ export default function Workout() {
       duration_sec: set.duration_sec?.toString() || "",
       distance_mi: set.distance_mi?.toString() || "",
     });
-  };
+  }
 
-  const handleSaveSet = async () => {
+  async function handleSaveSet() {
     if (!editingSet) return;
     try {
       setLoading(true);
@@ -239,14 +239,14 @@ export default function Workout() {
         duration_sec: "",
         distance_mi: "",
       });
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to save set");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleFinish = () => {
+  function handleFinish() {
     // Reset page state but don't delete the visit from database
     setGymVisit(null);
     setExercises([]);
@@ -263,12 +263,12 @@ export default function Workout() {
       duration_sec: "",
       distance_mi: "",
     });
-  };
+  }
 
-  const getExerciseTypeName = (exercise: Exercise) => {
+  function getExerciseTypeName(exercise: Exercise) {
     const type = exerciseTypes.find((t) => t.id === exercise.exercise_type_id);
     return type?.name || "Unknown";
-  };
+  }
 
   if (!gymVisit) {
     return (
@@ -290,7 +290,7 @@ export default function Workout() {
     );
   }
 
-  const formatGymVisitDate = (createdAt: string) => {
+  function formatGymVisitDate(createdAt: string) {
     const date = new Date(createdAt);
     return date.toLocaleString(undefined, {
       month: "short",
@@ -299,7 +299,7 @@ export default function Workout() {
       hour: "numeric",
       minute: "2-digit",
     });
-  };
+  }
 
   return (
     <ScrollView className="flex-1">

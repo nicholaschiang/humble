@@ -1,8 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
+import { AddExerciseModal } from "@/components/workout/AddExerciseModal";
+import { EditSetModal } from "@/components/workout/EditSetModal";
+import { ExerciseTypeSelectorModal } from "@/components/workout/ExerciseTypeSelectorModal";
+import { NewExerciseTypeModal } from "@/components/workout/NewExerciseTypeModal";
 import type { Tables } from "@/lib/database.types";
 import { useSession } from "@/lib/session";
+import {
+  EMPTY_SET_FORM,
+  formatGymVisitDate,
+  getExerciseTypeName,
+  parseSetForm,
+  type SetForm,
+} from "@/lib/workout-utils";
 import {
   createExercise,
   createExerciseType,
@@ -14,7 +24,7 @@ import {
   updateSet,
 } from "@/service/WorkoutService";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, Modal, Pressable, ScrollView, View } from "react-native";
+import { Alert, Pressable, ScrollView, View } from "react-native";
 
 type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
@@ -40,15 +50,10 @@ export default function Workout() {
     string | null
   >(null);
   const [editingSet, setEditingSet] = useState<{
-    setId: number | null; // null means new set
+    setId: number | null;
     exerciseId: string;
   } | null>(null);
-  const [editSetForm, setEditSetForm] = useState({
-    reps: "",
-    weight: "",
-    duration_sec: "",
-    distance_mi: "",
-  });
+  const [editSetForm, setEditSetForm] = useState<SetForm>(EMPTY_SET_FORM);
 
   const loadExerciseTypes = useCallback(async () => {
     try {
@@ -81,14 +86,12 @@ export default function Workout() {
     }
   }, []);
 
-  // Load exercises when gym visit is active
   useEffect(() => {
     if (gymVisit) {
       loadExercises();
     }
   }, [gymVisit, loadExercises]);
 
-  // Load sets when exercises change
   useEffect(() => {
     if (exercises.length > 0) {
       exercises.forEach((exercise) => {
@@ -97,7 +100,6 @@ export default function Workout() {
     }
   }, [exercises, loadSets]);
 
-  // Load exercise types
   useEffect(() => {
     loadExerciseTypes();
   }, [loadExerciseTypes]);
@@ -119,7 +121,7 @@ export default function Workout() {
   }, [session]);
 
   function handleToggleExercise(exerciseId: string) {
-    setExpandedExercises((prev: Set<string>) => {
+    setExpandedExercises((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(exerciseId)) {
         newSet.delete(exerciseId);
@@ -183,12 +185,7 @@ export default function Workout() {
 
   function handleAddSet(exerciseId: string) {
     setEditingSet({ setId: null, exerciseId });
-    setEditSetForm({
-      reps: "",
-      weight: "",
-      duration_sec: "",
-      distance_mi: "",
-    });
+    setEditSetForm(EMPTY_SET_FORM);
   }
 
   function handleEditSet(set: SetRow, exerciseId: string) {
@@ -201,44 +198,26 @@ export default function Workout() {
     });
   }
 
+  function handleSetFormChange(field: keyof SetForm, value: string) {
+    setEditSetForm((prev) => ({ ...prev, [field]: value }));
+  }
+
   async function handleSaveSet() {
     if (!editingSet) return;
     try {
       setLoading(true);
+      const setData = parseSetForm(editSetForm);
       if (editingSet.setId === null) {
-        // Creating new set
         await createSet({
           exercise_id: editingSet.exerciseId,
-          reps: editSetForm.reps ? parseFloat(editSetForm.reps) : null,
-          weight: editSetForm.weight ? parseFloat(editSetForm.weight) : null,
-          duration_sec: editSetForm.duration_sec
-            ? parseInt(editSetForm.duration_sec, 10)
-            : null,
-          distance_mi: editSetForm.distance_mi
-            ? parseFloat(editSetForm.distance_mi)
-            : null,
+          ...setData,
         });
       } else {
-        // Updating existing set
-        await updateSet(editingSet.setId, {
-          reps: editSetForm.reps ? parseFloat(editSetForm.reps) : null,
-          weight: editSetForm.weight ? parseFloat(editSetForm.weight) : null,
-          duration_sec: editSetForm.duration_sec
-            ? parseInt(editSetForm.duration_sec, 10)
-            : null,
-          distance_mi: editSetForm.distance_mi
-            ? parseFloat(editSetForm.distance_mi)
-            : null,
-        });
+        await updateSet(editingSet.setId, setData);
       }
       await loadSets(editingSet.exerciseId);
       setEditingSet(null);
-      setEditSetForm({
-        reps: "",
-        weight: "",
-        duration_sec: "",
-        distance_mi: "",
-      });
+      setEditSetForm(EMPTY_SET_FORM);
     } catch {
       Alert.alert("Error", "Failed to save set");
     } finally {
@@ -247,7 +226,6 @@ export default function Workout() {
   }
 
   function handleFinish() {
-    // Reset page state but don't delete the visit from database
     setGymVisit(null);
     setExercises([]);
     setSetsMap({});
@@ -257,17 +235,12 @@ export default function Workout() {
     setShowNewExerciseType(false);
     setSelectedExerciseTypeId(null);
     setEditingSet(null);
-    setEditSetForm({
-      reps: "",
-      weight: "",
-      duration_sec: "",
-      distance_mi: "",
-    });
+    setEditSetForm(EMPTY_SET_FORM);
   }
 
-  function getExerciseTypeName(exercise: Exercise) {
-    const type = exerciseTypes.find((t) => t.id === exercise.exercise_type_id);
-    return type?.name || "Unknown";
+  function handleEditSetClose() {
+    setEditingSet(null);
+    setEditSetForm(EMPTY_SET_FORM);
   }
 
   if (!gymVisit) {
@@ -278,35 +251,19 @@ export default function Workout() {
           disabled={loading}
           className="items-center justify-center"
         >
-          {/* Outer hollow circle */}
           <View className="w-32 h-32 rounded-full border-8 border-red-500 items-center justify-center">
-            {/* Inner filled circle */}
             <View className="w-[104px] h-[104px] rounded-full bg-red-500" />
           </View>
-          {/* Text below button */}
           <Text className="mt-6 text-lg font-semibold">Start Gym Visit?</Text>
         </Pressable>
       </View>
     );
   }
 
-  function formatGymVisitDate(createdAt: string) {
-    const date = new Date(createdAt);
-    return date.toLocaleString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
-  }
-
   return (
     <ScrollView className="flex-1">
       <View className="p-4">
-        {/* FOR EVENTUAL TOPBAR */}
         <View className="h-16" />
-        {/* Exercise Table */}
         <View className="flex-row justify-between items-center mb-2">
           <Text className="font-bold">
             Gym Visit started at {formatGymVisitDate(gymVisit.created_at)}
@@ -322,29 +279,28 @@ export default function Workout() {
 
             return (
               <View key={exercise.id} className="border-b border-gray-200">
-                {/* Exercise Row */}
                 <Pressable
                   onPress={() => handleToggleExercise(exercise.id)}
                   className="p-4 flex-row justify-between items-center"
                 >
                   <Text className="font-semibold">
-                    {getExerciseTypeName(exercise)}
+                    {getExerciseTypeName(
+                      exercise.exercise_type_id || "",
+                      exerciseTypes
+                    )}
                   </Text>
                   <Text>{isExpanded ? "▼" : "▶"}</Text>
                 </Pressable>
 
-                {/* Sets Accordion */}
                 {isExpanded && (
                   <View className="pl-4 pr-4 pb-4 bg-gray-50">
-                    {sets.map((set) => (
+                    {sets.map((set, index) => (
                       <View
                         key={set.id}
                         className="flex-row justify-between items-center p-2 border-b border-gray-200"
                       >
                         <View className="flex-1">
-                          <Text className="text-sm">
-                            Set {sets.indexOf(set) + 1}
-                          </Text>
+                          <Text className="text-sm">Set {index + 1}</Text>
                           <Text className="text-xs text-gray-600">
                             {set.reps !== null && `Reps: ${set.reps} `}
                             {set.weight !== null && `Weight: ${set.weight} `}
@@ -377,7 +333,6 @@ export default function Workout() {
             );
           })}
 
-          {/* Add Exercise Row */}
           <Pressable
             onPress={() => setShowAddExercise(true)}
             className="p-4 border-t border-gray-300 bg-gray-100"
@@ -385,218 +340,47 @@ export default function Workout() {
             <Text className="font-semibold text-center">Add Exercise</Text>
           </Pressable>
         </View>
-        {/* Add Exercise Modal */}
-        <Modal
+
+        <AddExerciseModal
           visible={showAddExercise}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setShowAddExercise(false)}
-        >
-          <View className="flex-1 bg-black/50 items-center justify-center">
-            <View className="bg-white p-6 rounded-lg w-11/12 max-w-md">
-              <Text variant="h3" className="mb-4">
-                Add Exercise
-              </Text>
+          selectedExerciseTypeId={selectedExerciseTypeId}
+          exerciseTypes={exerciseTypes}
+          loading={loading}
+          onClose={() => setShowAddExercise(false)}
+          onSelectExisting={() => setShowExerciseTypeSelector(true)}
+          onCreateNew={() => setShowNewExerciseType(true)}
+          onAdd={handleAddExercise}
+          onChange={() => setSelectedExerciseTypeId(null)}
+        />
 
-              {!selectedExerciseTypeId ? (
-                <>
-                  <Button
-                    onPress={() => setShowExerciseTypeSelector(true)}
-                    className="mb-2"
-                  >
-                    <Text>Select Existing Exercise Type</Text>
-                  </Button>
-                  <Button
-                    onPress={() => setShowNewExerciseType(true)}
-                    variant="outline"
-                  >
-                    <Text>Create New Exercise Type</Text>
-                  </Button>
-                </>
-              ) : (
-                <View>
-                  <Text className="mb-2">
-                    Selected:{" "}
-                    {
-                      exerciseTypes.find((t) => t.id === selectedExerciseTypeId)
-                        ?.name
-                    }
-                  </Text>
-                  <View className="flex-row gap-2">
-                    <Button
-                      onPress={handleAddExercise}
-                      disabled={loading}
-                      className="flex-1"
-                    >
-                      <Text>Add</Text>
-                    </Button>
-                    <Button
-                      onPress={() => setSelectedExerciseTypeId(null)}
-                      variant="outline"
-                    >
-                      <Text>Change</Text>
-                    </Button>
-                  </View>
-                </View>
-              )}
-
-              <Button
-                onPress={() => setShowAddExercise(false)}
-                variant="ghost"
-                className="mt-4"
-              >
-                <Text>Cancel</Text>
-              </Button>
-            </View>
-          </View>
-        </Modal>
-        {/* Exercise Type Selector Modal */}
-        <Modal
+        <ExerciseTypeSelectorModal
           visible={showExerciseTypeSelector}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setShowExerciseTypeSelector(false)}
-        >
-          <View className="flex-1 bg-black/50 items-center justify-center">
-            <View className="bg-white p-6 rounded-lg w-11/12 max-w-md">
-              <Text variant="h3" className="mb-4">
-                Select Exercise Type
-              </Text>
-              <ScrollView className="max-h-64">
-                {exerciseTypes.map((type) => (
-                  <Button
-                    key={type.id}
-                    onPress={() => handleSelectExerciseType(type.id)}
-                    variant="outline"
-                    className="mb-2"
-                  >
-                    <Text>{type.name}</Text>
-                  </Button>
-                ))}
-              </ScrollView>
-              <Button
-                onPress={() => setShowExerciseTypeSelector(false)}
-                variant="ghost"
-                className="mt-4"
-              >
-                <Text>Cancel</Text>
-              </Button>
-            </View>
-          </View>
-        </Modal>
-        {/* New Exercise Type Modal */}
-        <Modal
+          exerciseTypes={exerciseTypes}
+          onSelect={handleSelectExerciseType}
+          onClose={() => setShowExerciseTypeSelector(false)}
+        />
+
+        <NewExerciseTypeModal
           visible={showNewExerciseType}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setShowNewExerciseType(false)}
-        >
-          <View className="flex-1 bg-black/50 items-center justify-center">
-            <View className="bg-white p-6 rounded-lg w-11/12 max-w-md">
-              <Text variant="h3" className="mb-4">
-                Create Exercise Type
-              </Text>
-              <Input
-                placeholder="Exercise Type Name"
-                value={newExerciseTypeName}
-                onChangeText={setNewExerciseTypeName}
-                className="mb-4"
-              />
-              <View className="flex-row gap-2">
-                <Button
-                  onPress={handleCreateExerciseType}
-                  disabled={loading || !newExerciseTypeName.trim()}
-                  className="flex-1"
-                >
-                  <Text>Create</Text>
-                </Button>
-                <Button
-                  onPress={() => {
-                    setShowNewExerciseType(false);
-                    setNewExerciseTypeName("");
-                  }}
-                  variant="outline"
-                >
-                  <Text>Cancel</Text>
-                </Button>
-              </View>
-            </View>
-          </View>
-        </Modal>
-        {/* Edit Set Modal */}
-        <Modal
+          name={newExerciseTypeName}
+          loading={loading}
+          onNameChange={setNewExerciseTypeName}
+          onCreate={handleCreateExerciseType}
+          onClose={() => {
+            setShowNewExerciseType(false);
+            setNewExerciseTypeName("");
+          }}
+        />
+
+        <EditSetModal
           visible={!!editingSet}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setEditingSet(null)}
-        >
-          <View className="flex-1 bg-black/50 items-center justify-center">
-            <View className="bg-white p-6 rounded-lg w-11/12 max-w-md">
-              <Text variant="h3" className="mb-4">
-                {editingSet?.setId === null ? "Add Set" : "Edit Set"}
-              </Text>
-              <Input
-                placeholder="Reps"
-                value={editSetForm.reps}
-                onChangeText={(text) =>
-                  setEditSetForm({ ...editSetForm, reps: text })
-                }
-                keyboardType="numeric"
-                className="mb-2"
-              />
-              <Input
-                placeholder="Weight"
-                value={editSetForm.weight}
-                onChangeText={(text) =>
-                  setEditSetForm({ ...editSetForm, weight: text })
-                }
-                keyboardType="numeric"
-                className="mb-2"
-              />
-              <Input
-                placeholder="Duration (seconds)"
-                value={editSetForm.duration_sec}
-                onChangeText={(text) =>
-                  setEditSetForm({ ...editSetForm, duration_sec: text })
-                }
-                keyboardType="numeric"
-                className="mb-2"
-              />
-              <Input
-                placeholder="Distance (miles)"
-                value={editSetForm.distance_mi}
-                onChangeText={(text) =>
-                  setEditSetForm({ ...editSetForm, distance_mi: text })
-                }
-                keyboardType="numeric"
-                className="mb-4"
-              />
-              <View className="flex-row gap-2">
-                <Button
-                  onPress={handleSaveSet}
-                  disabled={loading}
-                  className="flex-1"
-                >
-                  <Text>Save</Text>
-                </Button>
-                <Button
-                  onPress={() => {
-                    setEditingSet(null);
-                    setEditSetForm({
-                      reps: "",
-                      weight: "",
-                      duration_sec: "",
-                      distance_mi: "",
-                    });
-                  }}
-                  variant="outline"
-                >
-                  <Text>Cancel</Text>
-                </Button>
-              </View>
-            </View>
-          </View>
-        </Modal>
+          isNew={editingSet?.setId === null}
+          form={editSetForm}
+          loading={loading}
+          onFormChange={handleSetFormChange}
+          onSave={handleSaveSet}
+          onClose={handleEditSetClose}
+        />
       </View>
     </ScrollView>
   );

@@ -19,32 +19,23 @@ export default function AuthForm() {
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSignIn = async () => {
+  const handleAuth = async (authAction: () => Promise<void>) => {
     setLoading(true);
     try {
-      await signIn(email, password);
-    } catch (error) {
-      Alert.alert(
-        "Error",
-        error instanceof Error ? error.message : "An unexpected error occurred"
-      );
+      await authAction();
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleRegister = async () => {
-    setLoading(true);
-    try {
-      await register(email, password, username, firstName, lastName);
-    } catch (error) {
-      Alert.alert(
-        "Error",
-        error instanceof Error ? error.message : "An unexpected error occurred"
-      );
-    } finally {
-      setLoading(false);
-    }
+  const handleSubmit = async () => {
+    const authAction = mode === "signIn"
+      ? () => signIn(email, password)
+      : () => register(email, password, username, firstName, lastName);
+  
+    await handleAuth(authAction);
   };
 
   const CommonFields = () => (
@@ -96,48 +87,22 @@ export default function AuthForm() {
     </>
   );
 
-  const RegisterFormActions = () => (
-    <FormActions>
-      <Button disabled={loading} onPress={handleRegister}>
-        <Text>Register</Text>
-      </Button>
-      <Button
-        variant="outline"
-        disabled={loading}
-        onPress={() => setMode("signIn")}
-      >
-        <Text>Already have an account</Text>
-      </Button>
-    </FormActions>
-  );
-
-  const SignInFormActions = () => (
-    <FormActions>
-      <Button disabled={loading} onPress={handleSignIn}>
-        <Text>Sign In</Text>
-      </Button>
-      <Button
-        variant="outline"
-        disabled={loading}
-        onPress={() => setMode("register")}
-      >
-        <Text>Need an account</Text>
-      </Button>
-    </FormActions>
-  );
-
   return (
     <FormContainer>
       <CommonFields />
-      {mode === "signIn" && (
-        <SignInFormActions />
-      )}
-      {mode === "register" && (
-        <>
-          <RegisterFormFields />
-          <RegisterFormActions />
-        </>
-      )}
+      {mode === "register" && <RegisterFormFields />}
+      <FormActions>
+        <Button disabled={loading} onPress={handleSubmit}>
+          <Text>{mode === "signIn" ? "Sign In" : "Register"}</Text>
+        </Button>
+        <Button
+          variant="outline"
+          disabled={loading}
+          onPress={() => setMode(mode === "signIn" ? "register" : "signIn")}
+        >
+          <Text>{mode === "signIn" ? "Need an account?" : "Already have an account?"}</Text>
+        </Button>
+      </FormActions>
     </FormContainer>
   );
 }

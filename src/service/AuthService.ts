@@ -1,3 +1,4 @@
+import { AuthError } from "@/errors";
 import { supabase } from "@/lib/supabase";
 
 export async function getUserProfile(userId: string) {

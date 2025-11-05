@@ -1,3 +1,5 @@
+import { DEFAULT_COLOR_SCHEME, THEME } from "@/lib/theme";
+import { register, signIn } from "@/service/AuthService";
 import React, { useState } from "react";
 import { Alert } from "react-native";
 import {
@@ -8,7 +10,79 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Text } from "./ui/text";
-import { signIn, register } from "@/service/AuthService";
+
+const CommonFields = ({
+  email,
+  setEmail,
+  password,
+  setPassword,
+}: {
+  email: string;
+  setEmail: (v: string) => void;
+  password: string;
+  setPassword: (v: string) => void;
+}) => (
+  <>
+    <FormField label="Email">
+      <Input
+        onChangeText={setEmail}
+        value={email}
+        placeholder="email@address.com"
+        autoCapitalize="none"
+      />
+    </FormField>
+    <FormField label="Password">
+      <Input
+        onChangeText={setPassword}
+        value={password}
+        secureTextEntry
+        placeholder="Password"
+        autoCapitalize="none"
+      />
+    </FormField>
+  </>
+);
+
+const RegisterFormFields = ({
+  username,
+  setUsername,
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
+}: {
+  username: string;
+  setUsername: (v: string) => void;
+  firstName: string;
+  setFirstName: (v: string) => void;
+  lastName: string;
+  setLastName: (v: string) => void;
+}) => (
+  <>
+    <FormField label="Username">
+      <Input
+        onChangeText={setUsername}
+        value={username}
+        placeholder="Username"
+        autoCapitalize="none"
+      />
+    </FormField>
+    <FormField label="First Name">
+      <Input
+        onChangeText={setFirstName}
+        value={firstName}
+        placeholder="First Name"
+      />
+    </FormField>
+    <FormField label="Last Name">
+      <Input
+        onChangeText={setLastName}
+        value={lastName}
+        placeholder="Last Name"
+      />
+    </FormField>
+  </>
+);
 
 export default function AuthForm() {
   const [mode, setMode] = useState<"signIn" | "register">("signIn");
@@ -19,7 +93,10 @@ export default function AuthForm() {
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleAuth = async (authAction: () => Promise<void>) => {
+  const colorScheme = DEFAULT_COLOR_SCHEME; // Default to dark theme
+  const theme = THEME[colorScheme];
+
+  async function handleAuth(authAction: () => Promise<void>) {
     setLoading(true);
     try {
       await authAction();
@@ -30,79 +107,66 @@ export default function AuthForm() {
     }
   }
 
-  const handleSubmit = async () => {
-    const authAction = mode === "signIn"
-      ? () => signIn(email, password)
-      : () => register(email, password, username, firstName, lastName);
-  
+  async function handleSubmit() {
+    const authAction =
+      mode === "signIn"
+        ? () => signIn(email, password)
+        : () => register(email, password, username, firstName, lastName);
+
     await handleAuth(authAction);
-  };
-
-  const CommonFields = () => (
-    <>
-      <FormField label="Email">
-        <Input
-          onChangeText={setEmail}
-          value={email}
-          placeholder="email@address.com"
-          autoCapitalize="none"
-        />
-      </FormField>
-      <FormField label="Password">
-        <Input
-          onChangeText={setPassword}
-          value={password}
-          secureTextEntry
-          placeholder="Password"
-          autoCapitalize="none"
-        />
-      </FormField>
-    </>
-  );
-
-  const RegisterFormFields = () => (
-    <>
-      <FormField label="Username">
-        <Input
-          onChangeText={setUsername}
-          value={username}
-          placeholder="Username"
-          autoCapitalize="none"
-        />
-      </FormField>
-      <FormField label="First Name">
-        <Input
-          onChangeText={setFirstName}
-          value={firstName}
-          placeholder="First Name"
-        />
-      </FormField>
-      <FormField label="Last Name">
-        <Input
-          onChangeText={setLastName}
-          value={lastName}
-          placeholder="Last Name"
-        />
-      </FormField>
-    </>
-  );
+  }
 
   return (
     <FormContainer>
-      <CommonFields />
-      {mode === "register" && <RegisterFormFields />}
+      <Text
+        style={{
+          fontSize: 24,
+          fontWeight: "bold",
+          textAlign: "center",
+          marginBottom: 16,
+          color: theme.primary,
+        }}
+      >
+        Humble
+      </Text>
+
+      <CommonFields
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+      />
+
+      {mode === "register" && (
+        <RegisterFormFields
+          username={username}
+          setUsername={setUsername}
+          firstName={firstName}
+          setFirstName={setFirstName}
+          lastName={lastName}
+          setLastName={setLastName}
+        />
+      )}
+
       <FormActions>
         <Button disabled={loading} onPress={handleSubmit}>
           <Text>{mode === "signIn" ? "Sign In" : "Register"}</Text>
         </Button>
+
         <Button
           variant="outline"
           disabled={loading}
-          onPress={() => setMode(mode === "signIn" ? "register" : "signIn")}
+          onPress={() => setMode(
+            mode === "signIn" ? "register" : "signIn"
+          )}
         >
-          <Text>{mode === "signIn" ? "Need an account?" : "Already have an account?"}</Text>
+          <Text>{
+            mode === "signIn"
+            ? "Need an account?"
+            : "Already have an account?"
+          }</Text>
         </Button>
       </FormActions>
     </FormContainer>
   );
-}
+};

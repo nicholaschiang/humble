@@ -66,7 +66,7 @@ export function AuthForm() {
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const colorScheme = DEFAULT_COLOR_SCHEME; // Default to dark theme
+  const colorScheme = DEFAULT_COLOR_SCHEME;
   const theme = THEME[colorScheme];
 
   async function handleAuth(authAction: () => Promise<void>) {

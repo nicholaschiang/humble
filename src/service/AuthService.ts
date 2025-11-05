@@ -14,9 +14,8 @@ async function createProfile(
     last_name: lastName,
   });
   if (error) {
-    throw new AuthError(error.message); // Throw the error instead of showing an alert
+    throw new AuthError(error.message);
   }
-  console.log("Profile created!");
 }
 
 export async function signIn(email: string, password: string) {
@@ -25,7 +24,7 @@ export async function signIn(email: string, password: string) {
     password,
   });
   if (error) {
-    throw new AuthError(error.message); // Pass the error to the caller
+    throw new AuthError(error.message);
   }
 }
 
@@ -45,7 +44,7 @@ export async function register(
     password,
   });
   if (error) {
-    throw new AuthError(error.message); // Pass the error to the caller
+    throw new AuthError(error.message);
   }
   await createProfile(data.user!.id, username, first_name, last_name);
 }
@@ -53,6 +52,6 @@ export async function register(
 export async function logout() {
   const { error } = await supabase.auth.signOut();
   if (error) {
-    throw new AuthError(error.message); // Pass the error to the caller
+    throw new AuthError(error.message);
   }
 }

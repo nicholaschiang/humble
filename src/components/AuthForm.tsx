@@ -201,7 +201,9 @@ export function AuthForm() {
         <Button
           variant="outline"
           disabled={loading}
-          onPress={() => setMode(mode === "signIn" ? "register" : "signIn")}
+          onPress={() => setMode(
+            mode === "signIn" ? "register" : "signIn"
+          )}
         >
           <Text>
             {mode === "signIn"

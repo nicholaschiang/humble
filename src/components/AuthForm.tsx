@@ -36,7 +36,6 @@ const CommonFields = ({
         onChangeText={setPassword}
         value={password}
         secureTextEntry
-        placeholder="Password"
         autoCapitalize="none"
       />
     </FormField>
@@ -63,7 +62,6 @@ const RegisterFormFields = ({
       <Input
         onChangeText={setUsername}
         value={username}
-        placeholder="Username"
         autoCapitalize="none"
       />
     </FormField>
@@ -71,14 +69,12 @@ const RegisterFormFields = ({
       <Input
         onChangeText={setFirstName}
         value={firstName}
-        placeholder="First Name"
       />
     </FormField>
     <FormField label="Last Name">
       <Input
         onChangeText={setLastName}
         value={lastName}
-        placeholder="Last Name"
       />
     </FormField>
   </>

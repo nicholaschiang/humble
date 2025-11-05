@@ -2,21 +2,12 @@ import { DEFAULT_COLOR_SCHEME, THEME } from "@/lib/theme";
 import { register, signIn } from "@/service/AuthService";
 import React, { useState } from "react";
 import { Alert } from "react-native";
-import {
-  FormActions,
-  FormContainer,
-  FormField,
-} from "./FormContainer";
+import { FormActions, FormContainer, FormField } from "./FormContainer";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Text } from "./ui/text";
 
-function CommonFields({
-  email,
-  setEmail,
-  password,
-  setPassword,
-}: any) {
+function CommonFields({ email, setEmail, password, setPassword }: any) {
   return (
     <>
       <FormField label="Email">
@@ -39,7 +30,7 @@ function CommonFields({
   );
 }
 
-function RegisterFormFields ({
+function RegisterFormFields({
   username,
   setUsername,
   firstName,
@@ -57,20 +48,14 @@ function RegisterFormFields ({
         />
       </FormField>
       <FormField label="First Name">
-        <Input
-          onChangeText={setFirstName}
-          value={firstName}
-        />
+        <Input onChangeText={setFirstName} value={firstName} />
       </FormField>
       <FormField label="Last Name">
-        <Input
-          onChangeText={setLastName}
-          value={lastName}
-        />
+        <Input onChangeText={setLastName} value={lastName} />
       </FormField>
     </>
   );
-} 
+}
 
 export function AuthForm() {
   const [mode, setMode] = useState<"signIn" | "register">("signIn");
@@ -144,17 +129,15 @@ export function AuthForm() {
         <Button
           variant="outline"
           disabled={loading}
-          onPress={() => setMode(
-            mode === "signIn" ? "register" : "signIn"
-          )}
+          onPress={() => setMode(mode === "signIn" ? "register" : "signIn")}
         >
-          <Text>{
-            mode === "signIn"
-            ? "Need an account?"
-            : "Already have an account?"
-          }</Text>
+          <Text>
+            {mode === "signIn"
+              ? "Need an account?"
+              : "Already have an account?"}
+          </Text>
         </Button>
       </FormActions>
     </FormContainer>
   );
-};
+}

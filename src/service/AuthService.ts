@@ -36,6 +36,10 @@ export async function register(
   first_name?: string,
   last_name?: string,
 ) {
+  if (!username) {
+    throw new AuthError("Username is required.");
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,

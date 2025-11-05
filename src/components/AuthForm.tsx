@@ -11,76 +11,68 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Text } from "./ui/text";
 
-const CommonFields = ({
+function CommonFields({
   email,
   setEmail,
   password,
   setPassword,
-}: {
-  email: string;
-  setEmail: (v: string) => void;
-  password: string;
-  setPassword: (v: string) => void;
-}) => (
-  <>
-    <FormField label="Email">
-      <Input
-        onChangeText={setEmail}
-        value={email}
-        placeholder="email@address.com"
-        autoCapitalize="none"
-      />
-    </FormField>
-    <FormField label="Password">
-      <Input
-        onChangeText={setPassword}
-        value={password}
-        secureTextEntry
-        autoCapitalize="none"
-      />
-    </FormField>
-  </>
-);
+}: any) {
+  return (
+    <>
+      <FormField label="Email">
+        <Input
+          onChangeText={setEmail}
+          value={email}
+          placeholder="email@address.com"
+          autoCapitalize="none"
+        />
+      </FormField>
+      <FormField label="Password">
+        <Input
+          onChangeText={setPassword}
+          value={password}
+          secureTextEntry
+          autoCapitalize="none"
+        />
+      </FormField>
+    </>
+  );
+}
 
-const RegisterFormFields = ({
+function RegisterFormFields ({
   username,
   setUsername,
   firstName,
   setFirstName,
   lastName,
   setLastName,
-}: {
-  username: string;
-  setUsername: (v: string) => void;
-  firstName: string;
-  setFirstName: (v: string) => void;
-  lastName: string;
-  setLastName: (v: string) => void;
-}) => (
-  <>
-    <FormField label="Username">
-      <Input
-        onChangeText={setUsername}
-        value={username}
-        autoCapitalize="none"
-      />
-    </FormField>
-    <FormField label="First Name">
-      <Input
-        onChangeText={setFirstName}
-        value={firstName}
-      />
-    </FormField>
-    <FormField label="Last Name">
-      <Input
-        onChangeText={setLastName}
-        value={lastName}
-      />
-    </FormField>
-  </>
-);
+}: any) {
+  return (
+    <>
+      <FormField label="Username">
+        <Input
+          onChangeText={setUsername}
+          value={username}
+          autoCapitalize="none"
+        />
+      </FormField>
+      <FormField label="First Name">
+        <Input
+          onChangeText={setFirstName}
+          value={firstName}
+        />
+      </FormField>
+      <FormField label="Last Name">
+        <Input
+          onChangeText={setLastName}
+          value={lastName}
+        />
+      </FormField>
+    </>
+  );
+} 
 
-export default function AuthForm() {
+export function AuthForm() {
   const [mode, setMode] = useState<"signIn" | "register">("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

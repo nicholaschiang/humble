@@ -1,7 +1,7 @@
 import { DarkTheme, DefaultTheme, type Theme } from "@react-navigation/native";
 import { Platform } from "react-native";
 
-export const DEFAULT_COLOR_SCHEME = "dark";
+export const DEFAULT_COLOR_SCHEME = "light";
 
 export const FONTS = Platform.select({
   ios: {

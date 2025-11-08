@@ -39,7 +39,7 @@ export default function Workout() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [setsMap, setSetsMap] = useState<Record<string, SetRow[]>>({});
   const [expandedExercises, setExpandedExercises] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
   const [loading, setLoading] = useState(false);
   const [showAddExercise, setShowAddExercise] = useState(false);
@@ -288,7 +288,7 @@ export default function Workout() {
                   <Text className="font-semibold">
                     {getExerciseTypeName(
                       exercise.exercise_type_id || "",
-                      exerciseTypes
+                      exerciseTypes,
                     )}
                   </Text>
                   <Text>{isExpanded ? "▼" : "▶"}</Text>

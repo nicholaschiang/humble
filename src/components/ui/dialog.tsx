@@ -23,7 +23,7 @@ const DialogOverlay = React.forwardRef<
       Platform.select({
         web: "fixed data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       }),
-      className
+      className,
     )}
     {...props}
   />
@@ -41,7 +41,7 @@ const DialogContent = React.forwardRef<
         "absolute inset-0 z-[101] items-center justify-center",
         Platform.select({
           web: "fixed",
-        })
+        }),
       )}
       pointerEvents="box-none"
     >
@@ -53,7 +53,7 @@ const DialogContent = React.forwardRef<
             web: "grid translate-x-[-50%] translate-y-[-50%] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg w-full gap-4 left-[50%] top-[50%]",
             default: "rounded-lg",
           }),
-          className
+          className,
         )}
         {...props}
       >
@@ -64,38 +64,42 @@ const DialogContent = React.forwardRef<
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
-const DialogHeader = ({
+function DialogHeader({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<typeof View>) => (
-  <View
-    className={cn(
-      "flex flex-col mb-4",
-      Platform.select({
-        web: "space-y-1.5 text-center sm:text-left mb-0",
-      }),
-      className
-    )}
-    {...props}
-  />
-);
+}: React.ComponentPropsWithoutRef<typeof View>) {
+  return (
+    <View
+      className={cn(
+        "flex flex-col mb-4",
+        Platform.select({
+          web: "space-y-1.5 text-center sm:text-left mb-0",
+        }),
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 DialogHeader.displayName = "DialogHeader";
 
-const DialogFooter = ({
+function DialogFooter({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<typeof View>) => (
-  <View
-    className={cn(
-      "flex flex-col-reverse mt-4",
-      Platform.select({
-        web: "sm:flex-row sm:justify-end sm:space-x-2 mt-0",
-      }),
-      className
-    )}
-    {...props}
-  />
-);
+}: React.ComponentPropsWithoutRef<typeof View>) {
+  return (
+    <View
+      className={cn(
+        "flex flex-col-reverse mt-4",
+        Platform.select({
+          web: "sm:flex-row sm:justify-end sm:space-x-2 mt-0",
+        }),
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 DialogFooter.displayName = "DialogFooter";
 
 const DialogTitle = React.forwardRef<
@@ -107,7 +111,7 @@ const DialogTitle = React.forwardRef<
     variant="h3"
     className={cn(
       "text-lg font-semibold leading-none tracking-tight",
-      className
+      className,
     )}
     {...props}
   />

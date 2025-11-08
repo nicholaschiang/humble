@@ -25,6 +25,7 @@ import {
 } from "@/service/WorkoutService";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, Pressable, ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
@@ -33,11 +34,12 @@ type ExerciseType = Tables<"ExerciseType">;
 
 export default function Workout() {
   const session = useSession();
+  const insets = useSafeAreaInsets();
   const [gymVisit, setGymVisit] = useState<GymVisit | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [setsMap, setSetsMap] = useState<Record<string, SetRow[]>>({});
   const [expandedExercises, setExpandedExercises] = useState<Set<string>>(
-    new Set(),
+    new Set()
   );
   const [loading, setLoading] = useState(false);
   const [showAddExercise, setShowAddExercise] = useState(false);
@@ -245,7 +247,7 @@ export default function Workout() {
 
   if (!gymVisit) {
     return (
-      <View className="flex-1 items-center justify-center">
+      <View className="flex-1 items-center justify-center bg-background">
         <Pressable
           onPress={handleStartGymVisit}
           disabled={loading}
@@ -261,24 +263,24 @@ export default function Workout() {
   }
 
   return (
-    <ScrollView className="flex-1">
-      <View className="p-4">
+    <ScrollView className="flex-1 bg-background">
+      <View className="p-4" style={{ paddingTop: insets.top }}>
         <View className="h-16" />
-        <View className="flex-row justify-between items-center mb-2">
-          <Text className="font-bold">
+        <View className="flex-row justify-between items-center mb-2 gap-2">
+          <Text className="font-bold flex-1" numberOfLines={1}>
             Gym Visit started at {formatGymVisitDate(gymVisit.created_at)}
           </Text>
           <Button onPress={handleFinish} variant="outline" size="sm">
             <Text>Finish</Text>
           </Button>
         </View>
-        <View className="border border-gray-300 rounded">
+        <View className="border border-border rounded">
           {exercises.map((exercise) => {
             const sets = setsMap[exercise.id] || [];
             const isExpanded = expandedExercises.has(exercise.id);
 
             return (
-              <View key={exercise.id} className="border-b border-gray-200">
+              <View key={exercise.id} className="border-b border-border">
                 <Pressable
                   onPress={() => handleToggleExercise(exercise.id)}
                   className="p-4 flex-row justify-between items-center"
@@ -286,22 +288,22 @@ export default function Workout() {
                   <Text className="font-semibold">
                     {getExerciseTypeName(
                       exercise.exercise_type_id || "",
-                      exerciseTypes,
+                      exerciseTypes
                     )}
                   </Text>
                   <Text>{isExpanded ? "▼" : "▶"}</Text>
                 </Pressable>
 
                 {isExpanded && (
-                  <View className="pl-4 pr-4 pb-4 bg-gray-50">
+                  <View className="pl-4 pr-4 pb-4 bg-muted">
                     {sets.map((set, index) => (
                       <View
                         key={set.id}
-                        className="flex-row justify-between items-center p-2 border-b border-gray-200"
+                        className="flex-row justify-between items-center p-2 border-b border-border"
                       >
                         <View className="flex-1">
                           <Text className="text-sm">Set {index + 1}</Text>
-                          <Text className="text-xs text-gray-600">
+                          <Text className="text-xs text-muted-foreground">
                             {set.reps !== null && `Reps: ${set.reps} `}
                             {set.weight !== null && `Weight: ${set.weight} `}
                             {set.duration_sec !== null &&
@@ -335,9 +337,11 @@ export default function Workout() {
 
           <Pressable
             onPress={() => setShowAddExercise(true)}
-            className="p-4 border-t border-gray-300 bg-gray-100"
+            className="p-4 border-t border-border bg-card active:bg-accent"
           >
-            <Text className="font-semibold text-center">Add Exercise</Text>
+            <Text className="font-semibold text-center text-foreground">
+              Add Exercise
+            </Text>
           </Pressable>
         </View>
 

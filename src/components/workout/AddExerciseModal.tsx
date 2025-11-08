@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Text } from "@/components/ui/text";
 import { View } from "react-native";
-import { BaseModal } from "../BaseModal";
 
 interface AddExerciseModalProps {
   visible: boolean;
@@ -27,36 +32,41 @@ export function AddExerciseModal({
   onChange,
 }: AddExerciseModalProps) {
   return (
-    <BaseModal visible={visible} title="Add Exercise" onRequestClose={onClose}>
-      {!selectedExerciseTypeId ? (
-        <>
-          <Button onPress={onSelectExisting} className="mb-2">
-            <Text>Select Existing Exercise Type</Text>
-          </Button>
-          <Button onPress={onCreateNew} variant="outline">
-            <Text>Create New Exercise Type</Text>
-          </Button>
-        </>
-      ) : (
-        <View>
-          <Text className="mb-2">
-            Selected:{" "}
-            {exerciseTypes.find((t) => t.id === selectedExerciseTypeId)?.name}
-          </Text>
-          <View className="flex-row gap-2">
-            <Button onPress={onAdd} disabled={loading} className="flex-1">
-              <Text>Add</Text>
+    <Dialog open={visible} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add Exercise</DialogTitle>
+        </DialogHeader>
+        {!selectedExerciseTypeId ? (
+          <>
+            <Button onPress={onSelectExisting} className="mb-2">
+              <Text>Select Existing Exercise Type</Text>
             </Button>
-            <Button onPress={onChange} variant="outline">
-              <Text>Change</Text>
+            <Button onPress={onCreateNew} variant="outline">
+              <Text>Create New Exercise Type</Text>
             </Button>
+          </>
+        ) : (
+          <View>
+            <Text className="mb-2">
+              Selected:{" "}
+              {exerciseTypes.find((t) => t.id === selectedExerciseTypeId)?.name}
+            </Text>
+            <View className="flex-row gap-2">
+              <Button onPress={onAdd} disabled={loading} className="flex-1">
+                <Text>Add</Text>
+              </Button>
+              <Button onPress={onChange} variant="outline">
+                <Text>Change</Text>
+              </Button>
+            </View>
           </View>
-        </View>
-      )}
+        )}
 
-      <Button onPress={onClose} variant="ghost" className="mt-4">
-        <Text>Cancel</Text>
-      </Button>
-    </BaseModal>
+        <Button onPress={onClose} variant="ghost" className="mt-4">
+          <Text>Cancel</Text>
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 }

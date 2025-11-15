@@ -1,14 +1,14 @@
 const colors = {
-  background: '#0b0f14',
-  surface: '#0f1419',
-  primary: '#225ba1ff',
-  primaryDark: '#103c72ff',
-  accent: '#00d4ff',
-  text: '#e6eef8',
-  mutedText: '#9aa6b2',
-  inputBg: '#0b0f14',
-  inputBorder: '#434f57ff',
-  danger: '#ff6b6b',
+  background: "#0b0f14",
+  surface: "#0f1419",
+  primary: "#225ba1ff",
+  primaryDark: "#103c72ff",
+  accent: "#00d4ff",
+  text: "#e6eef8",
+  mutedText: "#9aa6b2",
+  inputBg: "#0b0f14",
+  inputBorder: "#434f57ff",
+  danger: "#ff6b6b",
 };
 
 const spacing = {
@@ -26,7 +26,7 @@ const radii = {
 };
 
 const fonts = {
-  fontFamily: 'System',
+  fontFamily: "System",
   sizes: {
     xs: 12,
     sm: 14,
@@ -36,9 +36,9 @@ const fonts = {
     title: 40,
   },
   weights: {
-    regular: '400' as const,
-    medium: '500' as const,
-    bold: '700' as const,
+    regular: "400" as const,
+    medium: "500" as const,
+    bold: "700" as const,
   },
 };
 

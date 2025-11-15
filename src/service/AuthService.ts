@@ -1,4 +1,3 @@
-import { AuthError } from "@/errors";
 import { supabase } from "@/lib/supabase";
 
 async function createProfile(
@@ -14,7 +13,8 @@ async function createProfile(
     last_name: lastName,
   });
   if (error) {
-    throw new AuthError(error.message);
+    console.log("Error creating profile:", error);
+    throw error;
   }
 }
 
@@ -24,7 +24,8 @@ export async function signIn(email: string, password: string) {
     password,
   });
   if (error) {
-    throw new AuthError(error.message);
+    console.log("Error signing in:", error);
+    throw error;
   }
 }
 
@@ -36,7 +37,8 @@ export async function register(
   last_name?: string,
 ) {
   if (!username) {
-    throw new AuthError("Username is required.");
+    console.log("Username is required for registration");
+    throw new Error("Username is required");
   }
 
   const { data, error } = await supabase.auth.signUp({
@@ -44,7 +46,8 @@ export async function register(
     password,
   });
   if (error) {
-    throw new AuthError(error.message);
+    console.log("Error registering user:", error);
+    throw error;
   }
   await createProfile(data.user!.id, username, first_name, last_name);
 }
@@ -52,6 +55,7 @@ export async function register(
 export async function logout() {
   const { error } = await supabase.auth.signOut();
   if (error) {
-    throw new AuthError(error.message);
+    console.log("Error signing out:", error);
+    throw error;
   }
 }

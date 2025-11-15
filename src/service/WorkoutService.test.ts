@@ -128,6 +128,63 @@ describe("WorkoutService", () => {
       });
     });
 
+    describe("getGymVisitFeedForUser", () => {
+      it("should fetch the gym visits for all users user follows", async () => {
+
+        const mockVisits = [
+          {
+            id: "visit-1",
+            user_id: "user-456",
+            notes: "Workout 1",
+            created_at: "2024-01-01T00:00:00Z",
+          },
+          {
+            id: "visit-2",
+            user_id: "user-789",
+            notes: "Workout 2",
+            created_at: "2024-01-02T00:00:00Z",
+          },
+        ];
+
+        // First call: return the follows for the user
+        vi.mocked(supabase.from)
+          .mockImplementationOnce((table: string) => {
+            expect(table).toBe("Follow");
+            return {
+              select: vi.fn().mockReturnValue({
+                eq: vi.fn().mockReturnValue(
+                  Promise.resolve({
+                    data: [
+                      { followee_id: "user-456" },
+                      { followee_id: "user-789" },
+                    ],
+                    error: null,
+                  }),
+                ),
+              }),
+            } as any;
+          })
+          // Second call: return gym visits filtered by followee ids
+          .mockImplementationOnce((table: string) => {
+            expect(table).toBe("GymVisit");
+            return {
+              select: vi.fn().mockReturnValue({
+                in: vi.fn().mockReturnValue({
+                  order: vi.fn().mockResolvedValue({ data: mockVisits, error: null }),
+                }),
+              }),
+            } as any;
+          });
+
+        const result = await WorkoutService.getGymVisitFeedForUser("user-123");
+
+        expect(result).toEqual(mockVisits);
+        // Make sure we called Follow then GymVisit
+        expect(supabase.from).toHaveBeenCalledWith("Follow");
+        expect(supabase.from).toHaveBeenCalledWith("GymVisit");
+      });
+    });
+
     describe("updateGymVisit", () => {
       it("should update a gym visit", async () => {
         const mockUpdated = {

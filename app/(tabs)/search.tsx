@@ -35,6 +35,12 @@ const MOCK_USERS: UserResult[] = [
   { id: "26", username: "bigflexbaby", fullName: "Jade Sinclair" },
 ];
 
+//TODO:
+// Replace with real user type from Supabase
+// Add x for clearing search bar
+// Make it so pressing on follower goes to their profile
+// Make it so that you can unfollow from search bar too
+
 type UserResult = {
   id: string;
   username: string;

@@ -1,4 +1,5 @@
-import { Account } from "@/components/Account";
+import { SingleUserHistory } from "@/components/history/SingleUserHistory";
+
 import { useSession } from "@/lib/session";
 import { View } from "react-native";
 

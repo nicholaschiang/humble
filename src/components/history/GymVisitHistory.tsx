@@ -1,59 +1,97 @@
+import { Tables } from "@/lib/database.types";
 import { formatGymVisitDate, getExerciseTypeName } from "@/lib/workout-utils";
+import { getUserProfile } from "@/service/AuthService";
 import { getExerciseTypes, getExercisesByGymVisit, getSetsByExercise } from "@/service/WorkoutService";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
 
-type GymVisit = {
-  id: string;
-  user_id?: string | null;
-  notes?: string | null;
-  created_at: string;
-};
+type GymVisit = Tables<"GymVisit">;
+type Exercise = Tables<"Exercise">;
+type SetRow = Tables<"Set">;
 
-type Exercise = {
-  id: string;
-  gym_visit_id: string;
-  exercise_type_id?: string | null;
-};
+function formatSetRows(sets: SetRow[]): string {
+  if (!sets.length) return "No sets";
+  return sets
+    .map((s, i) => {
+      const parts: string[] = [];
+      if (s.reps != null) parts.push(`Reps: ${s.reps}`);
+      if (s.weight != null) parts.push(`Weight: ${s.weight}`);
+      if (s.duration_sec != null) parts.push(`Duration: ${s.duration_sec}s`);
+      if (s.distance_mi != null) parts.push(`Distance: ${s.distance_mi}mi`);
+      return `${i + 1}. ${parts.join(" ")}`;
+    }).join("\n");
+}
 
-type SetRow = {
-  id: number;
-  exercise_id: string;
-  reps?: number | null;
-  weight?: number | null;
-  duration_sec?: number | null;
-  distance_mi?: number | null;
-};
+function VisitCard({
+  visit,
+  exercises,
+  setsMap,
+  exerciseTypes,
+  userReadableName,
+}: {
+  visit: GymVisit;
+  exercises: Exercise[];
+  setsMap: Record<string, SetRow[]>;
+  exerciseTypes: any[];
+  userReadableName: string;
+}) {
+  return (
+    <View key={visit.id} className="mb-4 bg-card border border-border rounded-md overflow-hidden">
+      <View className="p-3">
+        <Text className="font-semibold">{formatGymVisitDate(visit.created_at)}</Text>
+        <Text className="text-xs text-muted-foreground mt-1">By {userReadableName}</Text>
 
-export function GymVisitHistory(
-  { getGymVisits }: { getGymVisits: () => Promise<GymVisit[]> }
-) {
+        {visit.notes ? (
+          <Text className="mt-2 text-sm text-foreground">{visit.notes}</Text>
+        ) : (
+          <Text className="mt-2 text-sm text-muted-foreground">No notes</Text>
+        )}
+
+        {exercises.length > 0 && (
+          <View className="mt-3 border-t border-border pt-3">
+            {exercises.map((ex) => (
+              <View key={ex.id} className="mb-2">
+                <Text className="font-semibold">
+                  {getExerciseTypeName(ex.exercise_type_id || "", exerciseTypes)}
+                </Text>
+
+                <Text className="text-xs text-muted-foreground mt-1">
+                  {formatSetRows(setsMap[ex.id] || [])}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
+      </View>
+    </View>
+  );
+}
+
+export function GymVisitHistory({ getGymVisits }: any) {
   const [visits, setVisits] = useState<GymVisit[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-
   const [exerciseTypes, setExerciseTypes] = useState<any[]>([]);
   const [exercisesMap, setExercisesMap] = useState<Record<string, Exercise[]>>({});
   const [setsMap, setSetsMap] = useState<Record<string, SetRow[]>>({});
+  const [userProfiles, setUserProfiles] = useState<Record<string, string>>({});
+
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
+
     try {
       const types = await getExerciseTypes();
       setExerciseTypes(types || []);
-    } catch (err) {
-      // ignore type load errors
+    } catch {
       setExerciseTypes([]);
     }
 
     try {
       const data = await getGymVisits();
       setVisits(data || []);
-    } catch (err) {
-      console.error("Failed to load gym visits", err);
-      setVisits([]);
     } finally {
       setLoading(false);
     }
@@ -63,38 +101,75 @@ export function GymVisitHistory(
     load();
   }, [load]);
 
-  // When visits change, fetch exercises and sets for each visit
   useEffect(() => {
-    if (visits.length === 0) return;
+    if (!visits.length) {
+      setExercisesMap({});
+      setSetsMap({});
+      return;
+    }
 
-    visits.forEach(async (visit) => {
-      try {
-        const exs = await getExercisesByGymVisit(visit.id);
-        setExercisesMap((prev) => ({ ...prev, [visit.id]: exs || [] }));
+    let canceled = false;
 
-        // For each exercise fetch sets
-        for (const ex of exs || []) {
-          try {
-            const sets = await getSetsByExercise(ex.id);
-            setSetsMap((prev) => ({ ...prev, [ex.id]: sets || [] }));
-          } catch (e) {
-            // ignore sets load errors per exercise
-            setSetsMap((prev) => ({ ...prev, [ex.id]: [] }));
+    async function loadDetails() {
+      const exercisesAcc: Record<string, Exercise[]> = {};
+      const setsAcc: Record<string, SetRow[]> = {};
+      const profilesAcc: Record<string, string> = { ...userProfiles };
+
+      // Load all exercises for all visits
+      const exercisePromises = visits.map(async (visit) => {
+        try {
+          const exs = await getExercisesByGymVisit(visit.id);
+          exercisesAcc[visit.id] = exs || [];
+
+          // Load all sets for these exercises
+          await Promise.all(
+            (exs || []).map(async (ex) => {
+              try {
+                const sets = await getSetsByExercise(ex.id);
+                setsAcc[ex.id] = sets || [];
+              } catch {
+                setsAcc[ex.id] = [];
+              }
+            })
+          );
+
+          // Fetch user profile if not already cached
+          if (visit.user_id && !profilesAcc[visit.user_id]) {
+            try {
+              const { first_name, last_name, username } = await getUserProfile(visit.user_id);
+              const readableName = first_name || last_name
+                ? `${first_name || ""} ${last_name || ""} (${username})`.trim()
+                : username;
+              profilesAcc[visit.user_id] = readableName;
+            } catch {
+              console.log("Failed to fetch user profile for user ID:", visit.user_id);
+              profilesAcc[visit.user_id] = "Unknown User";
+            }
           }
+        } catch {
+          exercisesAcc[visit.id] = [];
         }
-      } catch (e) {
-        setExercisesMap((prev) => ({ ...prev, [visit.id]: [] }));
+      });
+
+      await Promise.all(exercisePromises);
+      if (!canceled) {
+        setExercisesMap(exercisesAcc);
+        setSetsMap(setsAcc);
+        setUserProfiles(profilesAcc);
       }
-    });
-  }, [visits]);
+    }
+
+    loadDetails();
+    return () => {
+      canceled = true;
+    };
+  }, [visits, userProfiles]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
       const data = await getGymVisits();
       setVisits(data || []);
-    } catch (err) {
-      console.error("Failed to refresh gym visits", err);
     } finally {
       setRefreshing(false);
     }
@@ -119,47 +194,16 @@ export function GymVisitHistory(
             </Button>
           </View>
         ) : (
-          visits.map((visit) => {
-            const exercises = exercisesMap[visit.id] || [];
-
-            return (
-              <View key={visit.id} className="mb-4 bg-card border border-border rounded-md overflow-hidden">
-                <View className="p-3">
-                  <Text className="font-semibold">{formatGymVisitDate(visit.created_at)}</Text>
-                  <Text className="text-xs text-muted-foreground mt-1">{visit.user_id ? `By ${visit.user_id}` : ""}</Text>
-                  {visit.notes ? (
-                    <Text className="mt-2 text-sm text-foreground">{visit.notes}</Text>
-                  ) : (
-                    <Text className="mt-2 text-sm text-muted-foreground">No notes</Text>
-                  )}
-
-                  {/* Exercises (non-clickable) */}
-                  {exercises.length > 0 && (
-                    <View className="mt-3 border-t border-border pt-3">
-                      {exercises.map((ex) => {
-                        const sets = setsMap[ex.id] || [];
-                        return (
-                          <View key={ex.id} className="mb-2">
-                            <Text className="font-semibold">{getExerciseTypeName(ex.exercise_type_id || "", exerciseTypes)}</Text>
-                            <Text className="text-xs text-muted-foreground mt-1">
-                              {sets.length === 0 ? "No sets" : sets.map((s, i) => {
-                                const parts: string[] = [];
-                                if (s.reps != null) parts.push(`Reps: ${s.reps}`);
-                                if (s.weight != null) parts.push(`Weight: ${s.weight}`);
-                                if (s.duration_sec != null) parts.push(`Duration: ${s.duration_sec}s`);
-                                if (s.distance_mi != null) parts.push(`Distance: ${s.distance_mi}mi`);
-                                return `${i + 1}. ${parts.join(" ")}`;
-                              }).join(" • ")}
-                            </Text>
-                          </View>
-                        );
-                      })}
-                    </View>
-                  )}
-                </View>
-              </View>
-            );
-          })
+          visits.map((visit) => (
+            <VisitCard
+              key={visit.id}
+              visit={visit}
+              exercises={exercisesMap[visit.id] || []}
+              setsMap={setsMap}
+              exerciseTypes={exerciseTypes}
+              userReadableName={userProfiles[visit.user_id || ""] || "Unknown User"}
+            />
+          ))
         )}
       </ScrollView>
     </View>

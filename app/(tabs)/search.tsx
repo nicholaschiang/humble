@@ -1,3 +1,9 @@
+import { useState } from "react";
+import { View, TextInput, Keyboard, Pressable, FlatList } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Text } from "@/components/ui/text";
+import { Button } from "@/components/ui/button";
+
 const MOCK_USERS: UserResult[] = [
   { id: "1", username: "cole_strong", fullName: "Cole Strong" },
   { id: "2", username: "iron_giant", fullName: "Markus Hale" },

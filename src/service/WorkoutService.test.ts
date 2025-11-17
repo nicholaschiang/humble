@@ -130,7 +130,6 @@ describe("WorkoutService", () => {
 
     describe("getGymVisitFeedForUser", () => {
       it("should fetch the gym visits for all users user follows", async () => {
-
         const mockVisits = [
           {
             id: "visit-1",
@@ -170,7 +169,9 @@ describe("WorkoutService", () => {
             return {
               select: vi.fn().mockReturnValue({
                 in: vi.fn().mockReturnValue({
-                  order: vi.fn().mockResolvedValue({ data: mockVisits, error: null }),
+                  order: vi
+                    .fn()
+                    .mockResolvedValue({ data: mockVisits, error: null }),
                 }),
               }),
             } as any;

@@ -55,39 +55,38 @@ export default function SearchScreen() {
   const [hasSearched, setHasSearched] = useState(false);
 
   async function handleSearch() {
-  Keyboard.dismiss();
+    Keyboard.dismiss();
 
-  const trimmed = query.trim();
-  if (!trimmed) {
-    setHasSearched(false);
-    setResults([]);
-    return;
+    const trimmed = query.trim();
+    if (!trimmed) {
+      setHasSearched(false);
+      setResults([]);
+      return;
+    }
+
+    setHasSearched(true);
+
+    try {
+      // Call your Supabase-backed search service
+      const rows = await searchProfiles(trimmed);
+
+      // Map DB rows → UI type
+      const mapped: UserResult[] = rows.map((row) => {
+        const fullNameParts = [row.first_name, row.last_name].filter(Boolean);
+        return {
+          id: (row as any).id ?? (row as any).user_id,
+          username: row.username,
+          fullName: fullNameParts.length ? fullNameParts.join(" ") : null,
+        };
+      });
+
+      setResults(mapped);
+    } catch (err) {
+      console.log("Search error:", err);
+      // You could show a toast/snackbar here if you have one
+      setResults([]);
+    }
   }
-
-  setHasSearched(true);
-
-  try {
-    // Call your Supabase-backed search service
-    const rows = await searchProfiles(trimmed);
-
-    // Map DB rows → UI type
-    const mapped: UserResult[] = rows.map((row) => {
-      const fullNameParts = [row.first_name, row.last_name].filter(Boolean);
-      return {
-        id: row.id,
-        username: row.username,
-        fullName: fullNameParts.length ? fullNameParts.join(" ") : null,
-      };
-    });
-
-    setResults(mapped);
-  } catch (err) {
-    console.log("Search error:", err);
-    // You could show a toast/snackbar here if you have one
-    setResults([]);
-  }
-}
-
 
   return (
     <Pressable

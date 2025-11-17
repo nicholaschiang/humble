@@ -69,7 +69,7 @@ export async function getGymVisitFeedForUser(userId: string) {
     throw followsError;
   }
 
-  const followeeUserIds = follows.map(follow => follow.followee_id);
+  const followeeUserIds = follows.map((follow) => follow.followee_id);
   const { data, error } = await supabase
     .from("GymVisit")
     .select()

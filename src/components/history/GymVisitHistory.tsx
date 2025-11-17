@@ -1,7 +1,9 @@
 import { Tables } from "@/lib/database.types";
+import { useSessionState } from "@/lib/session";
 import { formatGymVisitDate, getExerciseTypeName } from "@/lib/workout-utils";
 import { getUserProfile } from "@/service/AuthService";
 import {
+  deleteGymVisit,
   getExerciseTypes,
   getExercisesByGymVisit,
   getSetsByExercise,
@@ -30,25 +32,55 @@ function formatSetRows(sets: SetRow[]): string {
     .join("\n");
 }
 
+function DeleteVisitButton({
+  onDelete,
+  visitId,
+}: {
+  onDelete: (id: string) => Promise<void>;
+  visitId: string;
+}) {
+  return (
+    <View style={{ position: "absolute", top: 8, right: 8, zIndex: 10 }}>
+      <Button
+        variant="ghost"
+        size="icon"
+        onPress={() => onDelete(visitId)}
+        accessibilityLabel={`Delete visit ${visitId}`}
+      >
+        <Text style={{ color: "#ef4444", fontWeight: "700", fontSize: 16 }}>
+          ✕
+        </Text>
+      </Button>
+    </View>
+  );
+}
+
 function VisitCard({
   visit,
   exercises,
   setsMap,
   exerciseTypes,
   userReadableName,
+  onDelete,
+  currentUserId,
 }: {
   visit: GymVisit;
   exercises: Exercise[];
   setsMap: Record<string, SetRow[]>;
   exerciseTypes: any[];
   userReadableName: string;
+  onDelete?: (id: string) => Promise<void>;
+  currentUserId?: string | null;
 }) {
   return (
     <View
       key={visit.id}
       className="mb-4 bg-card rounded-md overflow-hidden"
-      style={{ borderWidth: 2, borderColor: "#0f1724" }}
+      style={{ borderWidth: 2, borderColor: "#0f1724", position: "relative" }}
     >
+      {onDelete && currentUserId && currentUserId === visit.user_id && (
+        <DeleteVisitButton onDelete={onDelete} visitId={visit.id} />
+      )}
       <View className="p-4">
         <Text className="text-2xl font-semibold">
           {formatGymVisitDate(visit.created_at)}
@@ -91,6 +123,9 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
 
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  const { session } = useSessionState();
+  const currentUserId = session?.user?.id ?? null;
 
   const isFocused = useIsFocused();
 
@@ -203,6 +238,18 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
     }
   }, [getGymVisits]);
 
+  const handleDelete = useCallback(
+    async (visitId: string) => {
+      try {
+        await deleteGymVisit(visitId);
+        await load();
+      } catch (err) {
+        console.error("Failed to delete gym visit:", err);
+      }
+    },
+    [load],
+  );
+
   return (
     <View className="flex-1">
       <View className="p-4">
@@ -235,6 +282,8 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
               userReadableName={
                 userProfiles[visit.user_id || ""] || "Unknown User"
               }
+              onDelete={handleDelete}
+              currentUserId={currentUserId}
             />
           ))
         )}

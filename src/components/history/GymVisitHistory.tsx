@@ -55,12 +55,6 @@ function VisitCard({
           By {userReadableName}
         </Text>
 
-        {visit.notes ? (
-          <Text className="mt-2 text-sm text-foreground">{visit.notes}</Text>
-        ) : (
-          <Text className="mt-2 text-sm text-muted-foreground">No notes</Text>
-        )}
-
         {exercises.length > 0 && (
           <View className="mt-3 border-t border-border pt-3">
             {exercises.map((ex) => (

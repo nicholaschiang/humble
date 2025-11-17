@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { searchProfiles } from "@/service/SearchService";
 
 //TODO:
-// Replace with real user type from Supabase
-// Add x for clearing search bar
 // Make it so pressing on follower goes to their profile
 // Make it so that you can unfollow from search bar too
 
@@ -36,7 +34,7 @@ export default function SearchScreen() {
     setHasSearched(true);
 
     try {
-      // Call your Supabase-backed search service
+      // Call Supabase-backed search service
       const rows = await searchProfiles(trimmed);
 
       // Map DB rows → UI type
@@ -52,7 +50,6 @@ export default function SearchScreen() {
       setResults(mapped);
     } catch (err) {
       console.log("Search error:", err);
-      // You could show a toast/snackbar here if you have one
       setResults([]);
     }
   }

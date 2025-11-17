@@ -111,7 +111,7 @@ export default function SearchScreen() {
               data={results}
               keyExtractor={(item) => item.id}
               style={{
-                 marginBottom: 66, 
+                marginBottom: 66,
               }}
               contentContainerStyle={{
                 paddingBottom: 60,
@@ -127,7 +127,7 @@ export default function SearchScreen() {
                     ) : null}
                   </View>
 
-                  <Button size="sm" className="rounded-full px-4">
+                  <Button size="sm" className="bg-green-700 rounded-full px-4">
                     <Text className="font-semibold">Follow</Text>
                   </Button>
                 </Pressable>

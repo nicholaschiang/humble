@@ -6,6 +6,7 @@ import {
   getExercisesByGymVisit,
   getSetsByExercise,
 } from "@/service/WorkoutService";
+import { useIsFocused } from "@react-navigation/native";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { Button } from "../ui/button";
@@ -91,6 +92,8 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  const isFocused = useIsFocused();
+
   const load = useCallback(async () => {
     setLoading(true);
 
@@ -112,6 +115,13 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
   useEffect(() => {
     load();
   }, [load]);
+
+  // Re-run load when the screen gains focus (e.g., switching tabs)
+  useEffect(() => {
+    if (isFocused) {
+      load();
+    }
+  }, [isFocused, load]);
 
   useEffect(() => {
     if (!visits.length) {

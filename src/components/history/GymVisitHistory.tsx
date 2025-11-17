@@ -45,28 +45,29 @@ function VisitCard({
   return (
     <View
       key={visit.id}
-      className="mb-4 bg-card border border-border rounded-md overflow-hidden"
+      className="mb-4 bg-card rounded-md overflow-hidden"
+      style={{ borderWidth: 2, borderColor: "#0f1724" }}
     >
-      <View className="p-3">
-        <Text className="font-semibold">
+      <View className="p-4">
+        <Text className="text-2xl font-semibold">
           {formatGymVisitDate(visit.created_at)}
         </Text>
-        <Text className="text-xs text-muted-foreground mt-1">
+        <Text className="text-sm text-muted-foreground mt-1">
           By {userReadableName}
         </Text>
 
         {exercises.length > 0 && (
-          <View className="mt-3 border-t border-border pt-3">
+          <View className="mt-4 border-t border-border pt-4">
             {exercises.map((ex) => (
-              <View key={ex.id} className="mb-2">
-                <Text className="font-semibold">
+              <View key={ex.id} className="mb-3">
+                <Text className="text-lg font-semibold">
                   {getExerciseTypeName(
                     ex.exercise_type_id || "",
                     exerciseTypes,
                   )}
                 </Text>
 
-                <Text className="text-xs text-muted-foreground mt-1">
+                <Text className="text-sm text-muted-foreground mt-1">
                   {formatSetRows(setsMap[ex.id] || [])}
                 </Text>
               </View>
@@ -78,7 +79,7 @@ function VisitCard({
   );
 }
 
-export function GymVisitHistory({ getGymVisits }: any) {
+export function GymVisitHistory({ getGymVisits, title }: any) {
   const [visits, setVisits] = useState<GymVisit[]>([]);
   const [exerciseTypes, setExerciseTypes] = useState<any[]>([]);
   const [exercisesMap, setExercisesMap] = useState<Record<string, Exercise[]>>(
@@ -195,10 +196,7 @@ export function GymVisitHistory({ getGymVisits }: any) {
   return (
     <View className="flex-1">
       <View className="p-4">
-        <Text className="text-lg font-bold">History</Text>
-        <Text className="text-sm text-muted-foreground mt-1">
-          Recent gym visits
-        </Text>
+        <Text className="text-lg font-bold">{title}</Text>
       </View>
 
       <ScrollView

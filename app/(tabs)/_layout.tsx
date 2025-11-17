@@ -11,6 +11,10 @@ export default function TabLayout() {
         <Label>You</Label>
         <Icon sf="pencil.and.list.clipboard" />
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="search">
+        <Label>Search</Label>
+        <Icon sf="magnifyingglass" />
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="workout">
         <Label>Create</Label>
         <Icon sf="square.and.pencil" />

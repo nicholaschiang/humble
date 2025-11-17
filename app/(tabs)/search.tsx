@@ -1,3 +1,9 @@
+import { useState } from "react";
+import { View, TextInput, Keyboard, Pressable, FlatList } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Text } from "@/components/ui/text";
+import { Button } from "@/components/ui/button";
+
 const MOCK_USERS: UserResult[] = [
   { id: "1", username: "cole_strong", fullName: "Cole Strong" },
   { id: "2", username: "iron_giant", fullName: "Markus Hale" },
@@ -28,12 +34,6 @@ const MOCK_USERS: UserResult[] = [
   { id: "25", username: "gain_machine", fullName: "Nikolai Becker" },
   { id: "26", username: "bigflexbaby", fullName: "Jade Sinclair" },
 ];
-
-import { useState } from "react";
-import { View, TextInput, Keyboard, Pressable, FlatList } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Text } from "@/components/ui/text";
-import { Button } from "@/components/ui/button";
 
 type UserResult = {
   id: string;

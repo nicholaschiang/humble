@@ -102,16 +102,32 @@ export default function SearchScreen() {
         <Text className="text-2xl font-bold mb-3">Search</Text>
 
         {/* Search input */}
-        <TextInput
-          value={query}
-          onChangeText={setQuery}
-          placeholder="Search for users..."
-          placeholderTextColor="#9CA3AF"
-          className="w-full rounded-xl border border-border px-4 py-3 text-base text-foreground bg-muted"
-          returnKeyType="search"
-          onSubmitEditing={handleSearch}
-          blurOnSubmit
-        />
+        <View className="w-full flex-row items-center rounded-xl border border-border bg-muted px-4">
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Search for users..."
+            placeholderTextColor="#9CA3AF"
+            className="flex-1 py-3 text-base text-foreground"
+            returnKeyType="search"
+            onSubmitEditing={handleSearch}
+            blurOnSubmit
+          />
+
+          {query.length > 0 && (
+            <Pressable
+              onPress={() => {
+                setQuery("");
+                setResults([]);
+                setHasSearched(false);
+              }}
+              hitSlop={10}
+              className="ml-2 w-6 h-6 rounded-full bg-gray-500 items-center justify-center"
+            >
+              <Text className="text-base text-black">✕</Text>
+            </Pressable>
+          )}
+        </View>
 
         {/* Results / Empty state */}
         <View className="flex-1 mt-4">

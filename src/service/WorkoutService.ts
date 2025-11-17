@@ -60,7 +60,7 @@ export async function getGymVisitFeedForUser(userId: string) {
     .from("Follow")
     .select()
     .eq("follower_id", userId);
-    
+
   if (!follows || follows.length === 0) {
     return [];
   }

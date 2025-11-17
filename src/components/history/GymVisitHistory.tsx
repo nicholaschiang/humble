@@ -1,7 +1,11 @@
 import { Tables } from "@/lib/database.types";
 import { formatGymVisitDate, getExerciseTypeName } from "@/lib/workout-utils";
 import { getUserProfile } from "@/service/AuthService";
-import { getExerciseTypes, getExercisesByGymVisit, getSetsByExercise } from "@/service/WorkoutService";
+import {
+  getExerciseTypes,
+  getExercisesByGymVisit,
+  getSetsByExercise,
+} from "@/service/WorkoutService";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { Button } from "../ui/button";
@@ -21,7 +25,8 @@ function formatSetRows(sets: SetRow[]): string {
       if (s.duration_sec != null) parts.push(`Duration: ${s.duration_sec}s`);
       if (s.distance_mi != null) parts.push(`Distance: ${s.distance_mi}mi`);
       return `${i + 1}. ${parts.join(" ")}`;
-    }).join("\n");
+    })
+    .join("\n");
 }
 
 function VisitCard({
@@ -38,10 +43,17 @@ function VisitCard({
   userReadableName: string;
 }) {
   return (
-    <View key={visit.id} className="mb-4 bg-card border border-border rounded-md overflow-hidden">
+    <View
+      key={visit.id}
+      className="mb-4 bg-card border border-border rounded-md overflow-hidden"
+    >
       <View className="p-3">
-        <Text className="font-semibold">{formatGymVisitDate(visit.created_at)}</Text>
-        <Text className="text-xs text-muted-foreground mt-1">By {userReadableName}</Text>
+        <Text className="font-semibold">
+          {formatGymVisitDate(visit.created_at)}
+        </Text>
+        <Text className="text-xs text-muted-foreground mt-1">
+          By {userReadableName}
+        </Text>
 
         {visit.notes ? (
           <Text className="mt-2 text-sm text-foreground">{visit.notes}</Text>
@@ -54,7 +66,10 @@ function VisitCard({
             {exercises.map((ex) => (
               <View key={ex.id} className="mb-2">
                 <Text className="font-semibold">
-                  {getExerciseTypeName(ex.exercise_type_id || "", exerciseTypes)}
+                  {getExerciseTypeName(
+                    ex.exercise_type_id || "",
+                    exerciseTypes,
+                  )}
                 </Text>
 
                 <Text className="text-xs text-muted-foreground mt-1">
@@ -72,7 +87,9 @@ function VisitCard({
 export function GymVisitHistory({ getGymVisits }: any) {
   const [visits, setVisits] = useState<GymVisit[]>([]);
   const [exerciseTypes, setExerciseTypes] = useState<any[]>([]);
-  const [exercisesMap, setExercisesMap] = useState<Record<string, Exercise[]>>({});
+  const [exercisesMap, setExercisesMap] = useState<Record<string, Exercise[]>>(
+    {},
+  );
   const [setsMap, setSetsMap] = useState<Record<string, SetRow[]>>({});
   const [userProfiles, setUserProfiles] = useState<Record<string, string>>({});
 
@@ -130,19 +147,25 @@ export function GymVisitHistory({ getGymVisits }: any) {
               } catch {
                 setsAcc[ex.id] = [];
               }
-            })
+            }),
           );
 
           // Fetch user profile if not already cached
           if (visit.user_id && !profilesAcc[visit.user_id]) {
             try {
-              const { first_name, last_name, username } = await getUserProfile(visit.user_id);
-              const readableName = first_name || last_name
-                ? `${first_name || ""} ${last_name || ""} (${username})`.trim()
-                : username;
+              const { first_name, last_name, username } = await getUserProfile(
+                visit.user_id,
+              );
+              const readableName =
+                first_name || last_name
+                  ? `${first_name || ""} ${last_name || ""} (${username})`.trim()
+                  : username;
               profilesAcc[visit.user_id] = readableName;
             } catch {
-              console.log("Failed to fetch user profile for user ID:", visit.user_id);
+              console.log(
+                "Failed to fetch user profile for user ID:",
+                visit.user_id,
+              );
               profilesAcc[visit.user_id] = "Unknown User";
             }
           }
@@ -179,16 +202,22 @@ export function GymVisitHistory({ getGymVisits }: any) {
     <View className="flex-1">
       <View className="p-4">
         <Text className="text-lg font-bold">History</Text>
-        <Text className="text-sm text-muted-foreground mt-1">Recent gym visits</Text>
+        <Text className="text-sm text-muted-foreground mt-1">
+          Recent gym visits
+        </Text>
       </View>
 
       <ScrollView
         contentContainerStyle={{ padding: 16, paddingBottom: 48 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         {visits.length === 0 && !loading ? (
           <View className="items-center justify-center mt-8">
-            <Text className="text-sm text-muted-foreground mb-4">No gym visits to show.</Text>
+            <Text className="text-sm text-muted-foreground mb-4">
+              No gym visits to show.
+            </Text>
             <Button onPress={load}>
               <Text>Reload</Text>
             </Button>
@@ -201,7 +230,9 @@ export function GymVisitHistory({ getGymVisits }: any) {
               exercises={exercisesMap[visit.id] || []}
               setsMap={setsMap}
               exerciseTypes={exerciseTypes}
-              userReadableName={userProfiles[visit.user_id || ""] || "Unknown User"}
+              userReadableName={
+                userProfiles[visit.user_id || ""] || "Unknown User"
+              }
             />
           ))
         )}

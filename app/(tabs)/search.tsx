@@ -3,6 +3,7 @@ import { View, TextInput, Keyboard, Pressable, FlatList } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
+import { searchProfiles } from "@/service/SearchService";
 
 const MOCK_USERS: UserResult[] = [
   { id: "1", username: "cole_strong", fullName: "Cole Strong" },
@@ -53,22 +54,40 @@ export default function SearchScreen() {
   const [results, setResults] = useState<UserResult[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
-  function handleSearch() {
-    Keyboard.dismiss();
+  async function handleSearch() {
+  Keyboard.dismiss();
 
-    const trimmed = query.trim();
-    if (!trimmed) {
-      setHasSearched(false);
-      setResults([]);
-      return;
-    }
-
-    setHasSearched(true);
-
-    // 🔧 TODO: replace with real Supabase search
-    // For now, just a stub so UI works:
-    setResults(MOCK_USERS);
+  const trimmed = query.trim();
+  if (!trimmed) {
+    setHasSearched(false);
+    setResults([]);
+    return;
   }
+
+  setHasSearched(true);
+
+  try {
+    // Call your Supabase-backed search service
+    const rows = await searchProfiles(trimmed);
+
+    // Map DB rows → UI type
+    const mapped: UserResult[] = rows.map((row) => {
+      const fullNameParts = [row.first_name, row.last_name].filter(Boolean);
+      return {
+        id: row.id,
+        username: row.username,
+        fullName: fullNameParts.length ? fullNameParts.join(" ") : null,
+      };
+    });
+
+    setResults(mapped);
+  } catch (err) {
+    console.log("Search error:", err);
+    // You could show a toast/snackbar here if you have one
+    setResults([]);
+  }
+}
+
 
   return (
     <Pressable

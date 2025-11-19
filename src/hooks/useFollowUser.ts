@@ -1,18 +1,23 @@
 import { useState, useEffect } from "react";
-import { followUser, unfollowUser, isFollowingUser } from "@/service/FollowService";
+import {
+  followUser,
+  unfollowUser,
+  isFollowingUser,
+} from "@/service/FollowService";
 //import { useAuth } from "@/hooks/useAuth"; // or whatever you use to get current user
 
 export function useFollowUser(targetUserId: string) {
-//   const { user } = useAuth(); // adjust to your actual auth hook/context
-//   const currentUserId = user?.id ?? null;
-  const currentUserId = "TempUserID"; // TODO: Replace with actual logged-in user ID
+  //   const { user } = useAuth(); // adjust to your actual auth hook/context
+  //   const currentUserId = user?.id ?? null;
+  const currentUserId = "2efcbe2e-ff99-4ed0-81e4-bd413a1d2d01"; // TODO: Replace with actual logged-in user ID
 
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Optionally: load initial follow state (great for profile page)
   useEffect(() => {
-    if (!currentUserId || !targetUserId || currentUserId === targetUserId) return;
+    if (!currentUserId || !targetUserId || currentUserId === targetUserId)
+      return;
 
     let cancelled = false;
 
@@ -35,7 +40,7 @@ export function useFollowUser(targetUserId: string) {
   }, [currentUserId, targetUserId]);
 
   async function follow() {
-    if (!currentUserId || !targetUserId || currentUserId === targetUserId) return;
+    if (!currentUserId || !targetUserId) return;
 
     setLoading(true);
     try {
@@ -49,7 +54,7 @@ export function useFollowUser(targetUserId: string) {
   }
 
   async function unfollow() {
-    if (!currentUserId || !targetUserId || currentUserId === targetUserId) return;
+    if (!currentUserId || !targetUserId) return;
 
     setLoading(true);
     try {

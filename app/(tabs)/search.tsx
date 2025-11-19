@@ -2,7 +2,6 @@ import { useState } from "react";
 import { View, TextInput, Keyboard, Pressable, FlatList } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
-import { Button } from "@/components/ui/button";
 import { searchProfiles } from "@/service/SearchService";
 import { FollowButton } from "@/components/FollowButton";
 
@@ -24,8 +23,6 @@ export default function SearchScreen() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<UserResult[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
-
-  const currentUserId = "TempUserID"; // TODO: Replace with actual logged-in user ID
 
   async function handleSearch() {
     Keyboard.dismiss();
@@ -122,7 +119,7 @@ export default function SearchScreen() {
             // Scrollable results list
             <FlatList
               data={results}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.userId}
               style={{
                 marginBottom: 66,
               }}

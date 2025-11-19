@@ -4,13 +4,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { searchProfiles } from "@/service/SearchService";
+import { FollowButton } from "@/components/FollowButton";
 
 //TODO:
 // Make it so pressing on follower goes to their profile
 // Make it so that you can unfollow from search bar too
+// Indicate if already following users in the list
+// Make sure you can't follow someone you're already following
 
 type UserResult = {
   id: string;
+  userId: string;
   username: string;
   fullName?: string | null;
 };
@@ -20,6 +24,8 @@ export default function SearchScreen() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<UserResult[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const currentUserId = "TempUserID"; // TODO: Replace with actual logged-in user ID
 
   async function handleSearch() {
     Keyboard.dismiss();
@@ -41,7 +47,8 @@ export default function SearchScreen() {
       const mapped: UserResult[] = rows.map((row) => {
         const fullNameParts = [row.first_name, row.last_name].filter(Boolean);
         return {
-          id: (row as any).id ?? (row as any).user_id,
+          id: row.id,
+          userId: row.user_id,
           username: row.username,
           fullName: fullNameParts.length ? fullNameParts.join(" ") : null,
         };
@@ -133,9 +140,15 @@ export default function SearchScreen() {
                     ) : null}
                   </View>
 
-                  <Button size="sm" className="bg-green-700 rounded-full px-4">
+                  {/* <Button
+                    size="sm"
+                    className="bg-green-700 rounded-full px-4"
+                    onPress={() => handleFollow(item.userId)}
+                  >
                     <Text className="font-semibold">Follow</Text>
-                  </Button>
+                  </Button> */}
+                  {/* item.userId is the auth.users id / Follow table id */}
+                  <FollowButton targetUserId={item.userId} />
                 </Pressable>
               )}
             />

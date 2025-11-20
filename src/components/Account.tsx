@@ -1,12 +1,14 @@
-import { useCallback, useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
-import { Alert } from "react-native";
-import { Session } from "@supabase/supabase-js";
 import {
   FormActions,
-  FormField,
   FormContainer,
+  FormField,
 } from "@/components/FormContainer";
+import { uploadProfileImage } from "@/service/ProfileBucketService"; // 👈 add this
+import { getProfile, logout, updateProfile } from "@/service/ProfileService";
+import { Session } from "@supabase/supabase-js";
+import * as ImagePicker from "expo-image-picker"; // 👈 new
+import { useCallback, useEffect, useState } from "react";
+import { Alert, Image } from "react-native"; // 👈 make sure Image is from react-native
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,107 +19,151 @@ export function Account({ session }: { session: Session }) {
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const getProfile = useCallback(async () => {
+  const loadProfile = useCallback(async () => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      const { data, error, status } = await supabase
-        .from("Profile")
-        .select(`username, first_name, last_name`)
-        .eq("user_id", session?.user.id)
-        .single();
-      if (error && status !== 406) {
-        throw error;
-      }
+      const profile = await getProfile(session.user.id);
 
-      if (data) {
-        setUsername(data.username);
-        setFirstName(data.first_name);
-        setLastName(data.last_name);
+      if (profile) {
+        setUsername(profile.username);
+        setFirstName(profile.first_name);
+        setLastName(profile.last_name);
+        setImageUrl(profile.image_url ?? null);
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert(error.message);
+        Alert.alert("Error", error.message);
       }
     } finally {
       setLoading(false);
     }
   }, [session?.user]);
 
-  const updateProfile = useCallback(
-    async ({
-      username,
-      firstName,
-      lastName,
-    }: {
-      username: string;
-      firstName: string | null;
-      lastName: string | null;
-    }) => {
-      try {
-        setLoading(true);
-        if (!session?.user) throw new Error("No user on the session!");
+  const handleUpdateProfile = useCallback(async () => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
 
-        const updates = {
-          user_id: session?.user.id,
-          username,
-          first_name: firstName,
-          last_name: lastName,
-        };
-
-        const { error } = await supabase.from("Profile").upsert(updates);
-
-        if (error) {
-          throw error;
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          Alert.alert(error.message);
-        }
-      } finally {
-        setLoading(false);
+      await updateProfile(
+        session.user.id,
+        username,
+        firstName ?? "",
+        lastName ?? "",
+        imageUrl ?? "",
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error", error.message);
       }
-    },
-    [session?.user],
-  );
+    } finally {
+      setLoading(false);
+    }
+  }, [session?.user, username, firstName, lastName, imageUrl]);
+
+  const handleChangePhoto = useCallback(async () => {
+    try {
+      if (!session?.user) throw new Error("No user on the session!");
+
+      // 1. Ask for media library permission
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission required", "We need access to your photos.");
+        return;
+      }
+
+      // 2. Launch image picker
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "images", // ✅ correct for expo-image-picker 17
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+
+      if (result.canceled) {
+        return;
+      }
+
+      const asset = result.assets[0];
+      if (!asset?.uri) return;
+
+      setLoading(true);
+
+      // 3. Upload to Supabase Storage
+      const newUrl = await uploadProfileImage(session.user.id, asset.uri);
+
+      // 4. Update DB profile with new image URL
+      await updateProfile(
+        session.user.id,
+        username,
+        firstName ?? "",
+        lastName ?? "",
+        newUrl,
+      );
+
+      // 5. Update local state so UI refreshes instantly
+      setImageUrl(newUrl);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error", error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [session?.user, username, firstName, lastName]);
 
   useEffect(() => {
-    if (session) getProfile();
-  }, [session, getProfile]);
+    if (session) loadProfile();
+  }, [session, loadProfile]);
 
   return (
     <FormContainer>
+      {/* Profile Image */}
+      {imageUrl ? (
+        <Image
+          source={{ uri: imageUrl }}
+          style={{
+            width: 120,
+            height: 120,
+            borderRadius: 60,
+            alignSelf: "center",
+            marginBottom: 12,
+          }}
+        />
+      ) : null}
+
+      {/* Change Photo button */}
+      <Button
+        variant="outline"
+        onPress={handleChangePhoto}
+        disabled={loading}
+      >
+        <Text>Change Photo</Text>
+      </Button>
+
       <FormField label="Email">
         <Input value={session?.user?.email} readOnly />
       </FormField>
       <FormField label="Username">
-        <Input
-          value={username || ""}
-          onChangeText={(text) => setUsername(text)}
-        />
+        <Input value={username || ""} onChangeText={setUsername} />
       </FormField>
       <FormField label="First name">
-        <Input
-          value={firstName ?? ""}
-          onChangeText={(text) => setFirstName(text)}
-        />
+        <Input value={firstName ?? ""} onChangeText={setFirstName} />
       </FormField>
       <FormField label="Last name">
-        <Input
-          value={lastName ?? ""}
-          onChangeText={(text) => setLastName(text)}
-        />
+        <Input value={lastName ?? ""} onChangeText={setLastName} />
       </FormField>
+
       <FormActions>
-        <Button
-          onPress={() => updateProfile({ username, firstName, lastName })}
-          disabled={loading}
-        >
+        <Button onPress={handleUpdateProfile} disabled={loading}>
           <Text>{loading ? "Loading ..." : "Update"}</Text>
         </Button>
-        <Button variant="outline" onPress={() => supabase.auth.signOut()}>
+        <Button variant="outline" onPress={logout}>
           <Text>Sign out</Text>
         </Button>
       </FormActions>

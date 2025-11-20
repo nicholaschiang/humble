@@ -122,18 +122,21 @@ export type Database = {
           last_name: string | null;
           user_id: string;
           username: string;
+          image_url: string | null;
         };
         Insert: {
           first_name?: string | null;
           last_name?: string | null;
           user_id?: string;
           username: string;
+          image_url?: string | null;
         };
         Update: {
           first_name?: string | null;
           last_name?: string | null;
           user_id?: string;
           username?: string;
+          image_url?: string | null;
         };
         Relationships: [];
       };

@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { View, TextInput, Keyboard, Pressable, FlatList } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { useState } from "react";
+import { FlatList, Keyboard, Pressable, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MOCK_USERS: UserResult[] = [
   { id: "1", username: "cole_strong", fullName: "Cole Strong" },
@@ -73,7 +73,7 @@ export default function SearchScreen() {
         paddingBottom: insets.bottom,
       }}
     >
-      <View className="flex-1 px-4 pt-4">
+      <View className="flex-1 px-4 pt-4 bg-background">
         {/* Header */}
         <Text className="text-2xl font-bold mb-3">Search</Text>
 

@@ -96,7 +96,7 @@ export function AuthForm() {
               username,
               firstName,
               lastName,
-              profileImageUri,  // 👈 pass local image URI to service
+              profileImageUri, // 👈 pass local image URI to service
             );
 
     await handleAuth(authAction);
@@ -112,12 +112,11 @@ export function AuthForm() {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'images',   // ← correct for Expo Image Picker 17
+        mediaTypes: "images", // ← correct for Expo Image Picker 17
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
       });
-
 
       if (result.canceled) return;
 
@@ -168,7 +167,9 @@ export function AuthForm() {
             onPress={handlePickImage}
           >
             <Text>
-              {profileImageUri ? "Change profile picture" : "Choose profile picture"}
+              {profileImageUri
+                ? "Change profile picture"
+                : "Choose profile picture"}
             </Text>
           </Button>
         </>

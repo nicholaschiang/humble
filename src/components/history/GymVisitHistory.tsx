@@ -13,6 +13,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
@@ -113,6 +114,7 @@ function VisitCard({
 }
 
 export function GymVisitHistory({ getGymVisits, title }: any) {
+  const insets = useSafeAreaInsets();
   const [visits, setVisits] = useState<GymVisit[]>([]);
   const [exerciseTypes, setExerciseTypes] = useState<any[]>([]);
   const [exercisesMap, setExercisesMap] = useState<Record<string, Exercise[]>>(
@@ -251,43 +253,49 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
   );
 
   return (
-    <View className="flex-1">
-      <View className="p-4">
-        <Text className="text-lg font-bold">{title}</Text>
-      </View>
+    <View 
+      className="flex-1 bg-background"
+      style={{
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+      }}
+    >
+      <View className="px-2 pt-4">
+        <Text className="text-2xl font-bold mb-3">{title}</Text>
 
-      <ScrollView
-        contentContainerStyle={{ padding: 16, paddingBottom: 48 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        {visits.length === 0 && !loading ? (
-          <View className="items-center justify-center mt-8">
-            <Text className="text-sm text-muted-foreground mb-4">
-              No gym visits to show.
-            </Text>
-            <Button onPress={load}>
-              <Text>Reload</Text>
-            </Button>
-          </View>
-        ) : (
-          visits.map((visit) => (
-            <VisitCard
-              key={visit.id}
-              visit={visit}
-              exercises={exercisesMap[visit.id] || []}
-              setsMap={setsMap}
-              exerciseTypes={exerciseTypes}
-              userReadableName={
-                userProfiles[visit.user_id || ""] || "Unknown User"
-              }
-              onDelete={handleDelete}
-              currentUserId={currentUserId}
-            />
-          ))
-        )}
-      </ScrollView>
+        <ScrollView
+          contentContainerStyle={{ padding: 16, paddingBottom: 48 }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          {visits.length === 0 && !loading ? (
+            <View className="items-center justify-center mt-8">
+              <Text className="text-sm text-muted-foreground mb-4">
+                No gym visits to show.
+              </Text>
+              <Button onPress={load}>
+                <Text>Reload</Text>
+              </Button>
+            </View>
+          ) : (
+            visits.map((visit) => (
+              <VisitCard
+                key={visit.id}
+                visit={visit}
+                exercises={exercisesMap[visit.id] || []}
+                setsMap={setsMap}
+                exerciseTypes={exerciseTypes}
+                userReadableName={
+                  userProfiles[visit.user_id || ""] || "Unknown User"
+                }
+                onDelete={handleDelete}
+                currentUserId={currentUserId}
+              />
+            ))
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 }

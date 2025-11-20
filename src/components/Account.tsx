@@ -84,7 +84,6 @@ export function Account({ session }: { session: Session }) {
         quality: 0.8,
       });
 
-
       if (result.canceled) {
         return;
       }
@@ -138,11 +137,7 @@ export function Account({ session }: { session: Session }) {
       ) : null}
 
       {/* Change Photo button */}
-      <Button
-        variant="outline"
-        onPress={handleChangePhoto}
-        disabled={loading}
-      >
+      <Button variant="outline" onPress={handleChangePhoto} disabled={loading}>
         <Text>Change Photo</Text>
       </Button>
 

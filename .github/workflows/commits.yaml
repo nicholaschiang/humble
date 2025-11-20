@@ -10,7 +10,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify commit format (if this fails, ensure your commits follow https://conventionalcommits.org)
+      - name: Verify commit format (only PR commits)
         uses: cocogitto/cocogitto-action@v4
         with:
-          command: check
+          command: check --from-ref origin/main
+

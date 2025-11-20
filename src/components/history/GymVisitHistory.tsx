@@ -253,7 +253,7 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
   );
 
   return (
-    <View 
+    <View
       className="flex-1 bg-background"
       style={{
         paddingTop: insets.top,

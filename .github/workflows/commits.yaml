@@ -14,4 +14,3 @@ jobs:
         uses: cocogitto/cocogitto-action@v4
         with:
           command: check --from-ref origin/main
-

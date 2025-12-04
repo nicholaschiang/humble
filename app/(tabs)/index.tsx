@@ -1,10 +1,8 @@
-import { Placeholder } from "@/components/Placeholder";
-import { View } from "react-native";
+import { UserFeed } from "@/components/history/UserFeed";
+
+import { useSession } from "@/lib/session";
 
 export default function Home() {
-  return (
-    <View className="flex-1 bg-background">
-      <Placeholder>Home</Placeholder>
-    </View>
-  );
+  const session = useSession();
+  return <UserFeed userId={session.user.id} />;
 }

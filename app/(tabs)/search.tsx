@@ -35,43 +35,6 @@ const MOCK_USERS: UserResult[] = [
   { id: "26", username: "bigflexbaby", fullName: "Jade Sinclair" },
 ];
 
-import { useState } from "react";
-import { View, TextInput, Keyboard, Pressable, FlatList } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Text } from "@/components/ui/text";
-import { Button } from "@/components/ui/button";
-
-const MOCK_USERS: UserResult[] = [
-  { id: "1", username: "cole_strong", fullName: "Cole Strong" },
-  { id: "2", username: "iron_giant", fullName: "Markus Hale" },
-  { id: "3", username: "gymshark98", fullName: "Jess Ramirez" },
-  { id: "4", username: "squatfather", fullName: "Leo Henderson" },
-  { id: "5", username: "bench_bandit", fullName: "Riley Chen" },
-  { id: "6", username: "deadlift_dan", fullName: "Dan Carpenter" },
-
-  // --- New 20 mock users ---
-  { id: "7", username: "latpulldown_larry", fullName: "Larry Benton" },
-  { id: "8", username: "pullup_prince", fullName: "Andre Foster" },
-  { id: "9", username: "the_leg_pressor", fullName: "Maya Patel" },
-  { id: "10", username: "protein_papi", fullName: "Angel Serrano" },
-  { id: "11", username: "barbell_bae", fullName: "Tessa Grimes" },
-  { id: "12", username: "runlikewind", fullName: "Derek Morrison" },
-  { id: "13", username: "delt_deity", fullName: "Sienna Fox" },
-  { id: "14", username: "curl_king", fullName: "Brennan Cole" },
-  { id: "15", username: "trapzilla", fullName: "Olivia Grant" },
-  { id: "16", username: "corey_corecrusher", fullName: "Corey Matthews" },
-  { id: "17", username: "hamstring_hammer", fullName: "Noah Fields" },
-  { id: "18", username: "kettlequeen", fullName: "Valeria Gomez" },
-  { id: "19", username: "therower", fullName: "Brandon Wolfe" },
-  { id: "20", username: "massbuilder_mike", fullName: "Mike Alvarez" },
-  { id: "21", username: "plate_spinstress", fullName: "Kira Iverson" },
-  { id: "22", username: "treadmill_tornado", fullName: "Emery Clarke" },
-  { id: "23", username: "foamroller_fiend", fullName: "Harper Lin" },
-  { id: "24", username: "whey2serious", fullName: "Elias Douglas" },
-  { id: "25", username: "gain_machine", fullName: "Nikolai Becker" },
-  { id: "26", username: "bigflexbaby", fullName: "Jade Sinclair" },
-];
-
 type UserResult = {
   id: string;
   username: string;

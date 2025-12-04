@@ -1,7 +1,8 @@
 import { DEFAULT_COLOR_SCHEME, THEME } from "@/lib/theme";
-import { register, signIn } from "@/service/AuthService";
+import { register, signIn } from "@/service/ProfileService";
+import * as ImagePicker from "expo-image-picker"; // 👈 add ImagePicker
 import React, { useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Image } from "react-native"; // 👈 add Image
 import { FormActions, FormContainer, FormField } from "./FormContainer";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -64,6 +65,10 @@ export function AuthForm() {
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+
+  // 👇 local URI for the image the user picked (not the URL in storage)
+  const [profileImageUri, setProfileImageUri] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(false);
 
   const colorScheme = DEFAULT_COLOR_SCHEME;
@@ -84,9 +89,46 @@ export function AuthForm() {
     const authAction =
       mode === "signIn"
         ? () => signIn(email, password)
-        : () => register(email, password, username, firstName, lastName);
+        : () =>
+            register(
+              email,
+              password,
+              username,
+              firstName,
+              lastName,
+              profileImageUri, // 👈 pass local image URI to service
+            );
 
     await handleAuth(authAction);
+  }
+
+  async function handlePickImage() {
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission required", "We need access to your photos.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "images", // ← correct for Expo Image Picker 17
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (result.canceled) return;
+
+      const asset = result.assets[0];
+      if (!asset?.uri) return;
+
+      setProfileImageUri(asset.uri);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error", error.message);
+      }
+    }
   }
 
   return (
@@ -102,6 +144,36 @@ export function AuthForm() {
       >
         Humble
       </Text>
+
+      {/* 👇 Only show image picker UI in register mode */}
+      {mode === "register" && (
+        <>
+          {profileImageUri && (
+            <Image
+              source={{ uri: profileImageUri }}
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: 60,
+                alignSelf: "center",
+                marginBottom: 12,
+              }}
+            />
+          )}
+
+          <Button
+            variant="outline"
+            disabled={loading}
+            onPress={handlePickImage}
+          >
+            <Text>
+              {profileImageUri
+                ? "Change profile picture"
+                : "Choose profile picture"}
+            </Text>
+          </Button>
+        </>
+      )}
 
       <CommonFields
         email={email}

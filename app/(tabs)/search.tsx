@@ -73,7 +73,7 @@ export default function SearchScreen() {
         paddingBottom: insets.bottom,
       }}
     >
-      <View className="flex-1 px-4 pt-4">
+      <View className="flex-1 px-4 pt-4 bg-background">
         {/* Header */}
         <Text className="text-2xl font-bold mb-3">Search</Text>
 

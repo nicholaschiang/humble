@@ -55,6 +55,35 @@ export async function getGymVisitsByUser(userId: string) {
   return data || [];
 }
 
+export async function getGymVisitFeedForUser(userId: string) {
+  const { data: follows, error: followsError } = await supabase
+    .from("Follow")
+    .select()
+    .eq("follower_id", userId);
+
+  if (!follows || follows.length === 0) {
+    return [];
+  }
+  if (followsError) {
+    console.error("Error fetching follows:", followsError);
+    throw followsError;
+  }
+
+  const followeeUserIds = follows.map((follow) => follow.followee_id);
+  const { data, error } = await supabase
+    .from("GymVisit")
+    .select()
+    .in("user_id", followeeUserIds)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching gym visit feed:", error);
+    throw error;
+  }
+
+  return data || [];
+}
+
 export async function updateGymVisit(
   id: string,
   updates: TablesUpdate<"GymVisit">,

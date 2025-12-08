@@ -90,8 +90,12 @@ export function VisitCard({
   const [likeCount, setLikeCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
   const [commentsVisible, setCommentsVisible] = useState(false);
-  const [visitUserFullName, setVisitUserFullName] = useState<string | null>(null);
-  const [visitUserUsername, setVisitUserUsername] = useState<string | null>(null);
+  const [visitUserFullName, setVisitUserFullName] = useState<string | null>(
+    null,
+  );
+  const [visitUserUsername, setVisitUserUsername] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -125,7 +129,10 @@ export function VisitCard({
           return;
         }
         const profile = await getUserProfile(visit.user_id);
-        const full = [profile.first_name || "", profile.last_name || ""].filter(Boolean).join(" ") || userReadableName;
+        const full =
+          [profile.first_name || "", profile.last_name || ""]
+            .filter(Boolean)
+            .join(" ") || userReadableName;
         setVisitUserFullName(full);
         setVisitUserUsername(profile.username || null);
       } catch (error) {
@@ -194,14 +201,16 @@ export function VisitCard({
             onPress={() => setCommentsVisible(true)}
             accessibilityLabel={`Open comments for visit ${visit.id}`}
           >
-              <Text className="text-foreground font-semibold mr-2">{commentCount}</Text>
-              <FontAwesome
-                name="comment"
-                size={16}
-                color="#FFF"
-                style={{ marginRight: 8 }}
-              />
-              <Text className="text-foreground font-semibold">Comments</Text>
+            <Text className="text-foreground font-semibold mr-2">
+              {commentCount}
+            </Text>
+            <FontAwesome
+              name="comment"
+              size={16}
+              color="#FFF"
+              style={{ marginRight: 8 }}
+            />
+            <Text className="text-foreground font-semibold">Comments</Text>
           </Button>
           <Button
             className="ml-2 bg-muted rounded-md px-3 py-2 flex-row items-center"

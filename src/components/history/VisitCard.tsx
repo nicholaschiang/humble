@@ -260,8 +260,9 @@ export function VisitCard({
         {/* HEADER */}
         <Pressable
           onPress={handleToggleExpanded}
-          className="flex-row items-center justify-between"
+          //className="flex-row items-center justify-between"
         >
+          <View className="flex-row items-center justify-between">
           <View className="flex-1 mr-2">
             <Text className="text-2xl font-semibold">{displayName}</Text>
             <Text className="text-sm text-muted-foreground">
@@ -276,26 +277,26 @@ export function VisitCard({
             size={18}
             color="#FFF"
           />
-        </Pressable>
+          </View>
 
-        {/* -------- QUICK SUMMARY SECTION -------- */}
-        {exercises.length > 0 && (
+          {exercises.length > 0 && (
           <View className="mt-2">
             <Text className="text-sm text-muted-foreground">
-              Total Volume:{" "}
-              <Text className="text-white font-semibold">
+              Total Weight:{" "}
+              <Text className="text-yellow-600 font-semibold">
                 {totalVolume} lbs
               </Text>
             </Text>
 
             <Text className="text-sm text-muted-foreground">
               Unique Lifts:{" "}
-              <Text className="text-white font-semibold">
+              <Text className="text-yellow-600 font-semibold">
                 {uniqueLiftCount}
               </Text>
             </Text>
           </View>
         )}
+        </Pressable>
 
         {/* -------- DETAILS (only expanded) -------- */}
         {expanded && exercises.length > 0 && (

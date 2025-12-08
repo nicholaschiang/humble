@@ -3,6 +3,7 @@ import { getExerciseTypeName } from "@/lib/workout-utils";
 import { getUserProfile } from "@/service/AuthService";
 import {
   AddLike,
+  GetCommentCountForGymVisit,
   GetLikeCountForGymVisit,
   RemoveLike,
   UserLikesGymVisit,
@@ -87,27 +88,33 @@ export function VisitCard({
   const navigation = useNavigation<NavigationParams>();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
   const [commentsVisible, setCommentsVisible] = useState(false);
   const [visitUserFullName, setVisitUserFullName] = useState<string | null>(null);
   const [visitUserUsername, setVisitUserUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchLikeStatusAndCount = async () => {
-      if (!currentUserId) return;
-
+    const fetchCounts = async () => {
       try {
-        const [isLiked, count] = await Promise.all([
-          UserLikesGymVisit(currentUserId, visit.id),
+        // always fetch totals
+        const [likeCnt, commentCnt] = await Promise.all([
           GetLikeCountForGymVisit(visit.id),
+          GetCommentCountForGymVisit(visit.id),
         ]);
-        setLiked(isLiked);
-        setLikeCount(count);
+        setLikeCount(likeCnt);
+        setCommentCount(commentCnt);
+
+        // fetch whether current user liked this visit (only if we have a user)
+        if (currentUserId) {
+          const isLiked = await UserLikesGymVisit(currentUserId, visit.id);
+          setLiked(isLiked);
+        }
       } catch (error) {
-        console.error("Failed to fetch like status or count:", error);
+        console.error("Failed to fetch like/comment counts or status:", error);
       }
     };
 
-    fetchLikeStatusAndCount();
+    fetchCounts();
   }, [currentUserId, visit.id]);
 
   useEffect(() => {
@@ -187,13 +194,14 @@ export function VisitCard({
             onPress={() => setCommentsVisible(true)}
             accessibilityLabel={`Open comments for visit ${visit.id}`}
           >
-            <FontAwesome
-              name="comment"
-              size={16}
-              color="#FFF"
-              style={{ marginRight: 8 }}
-            />
-            <Text className="text-foreground font-semibold">Comments</Text>
+              <Text className="text-foreground font-semibold mr-2">{commentCount}</Text>
+              <FontAwesome
+                name="comment"
+                size={16}
+                color="#FFF"
+                style={{ marginRight: 8 }}
+              />
+              <Text className="text-foreground font-semibold">Comments</Text>
           </Button>
           <Button
             className="ml-2 bg-muted rounded-md px-3 py-2 flex-row items-center"
@@ -223,6 +231,7 @@ export function VisitCard({
         setsMap={setsMap}
         exerciseTypes={exerciseTypes}
         userReadableName={userReadableName}
+        onCommentAdded={() => setCommentCount((c) => c + 1)}
       />
     </View>
   );

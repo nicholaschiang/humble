@@ -283,14 +283,14 @@ export function VisitCard({
           <View className="mt-2">
             <Text className="text-sm text-muted-foreground">
               Total Weight:{" "}
-              <Text className="text-yellow-600 font-semibold">
+              <Text className="text-green-600 font-semibold">
                 {totalVolume} lbs
               </Text>
             </Text>
 
             <Text className="text-sm text-muted-foreground">
               Unique Lifts:{" "}
-              <Text className="text-yellow-600 font-semibold">
+              <Text className="text-green-700 font-semibold">
                 {uniqueLiftCount}
               </Text>
             </Text>

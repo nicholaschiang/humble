@@ -11,9 +11,9 @@ import {
 import { useIsFocused } from "@react-navigation/native";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
@@ -108,6 +108,15 @@ function VisitCard({
             ))}
           </View>
         )}
+        <Button
+          className="mt-4 bg-muted rounded-md px-4 py-2 flex-row items-center"
+          onPress={() => {}}
+          accessibilityLabel={`Open comments for visit ${visit.id}`}
+        >
+          <Text className="text-foreground font-semibold mr-2">
+            💬 Comments
+          </Text>
+        </Button>
       </View>
     </View>
   );

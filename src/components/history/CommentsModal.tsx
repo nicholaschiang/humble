@@ -52,12 +52,9 @@ export function CommentsModal({
   );
   const [comments, setComments] = useState<FormattedComment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleAddComment = async () => {
+  async function handleAddComment() {
     if (!newComment.trim()) return;
-
-    setLoading(true);
 
     try {
       const addedCommentResponse = await AddComment(
@@ -82,13 +79,11 @@ export function CommentsModal({
       setNewComment("");
     } catch (error) {
       console.error("Failed to add comment:", error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }
 
   useEffect(() => {
-    const fetchComments = async () => {
+    async function fetchComments() {
       try {
         const fetchedComments = await GetCommentsForGymVisit(visit.id);
         const formattedComments: FormattedComment[] = await Promise.all(
@@ -114,9 +109,9 @@ export function CommentsModal({
       } catch (error) {
         console.error("Failed to fetch comments:", error);
       }
-    };
+    }
 
-    const fetchVisitUser = async () => {
+    async function fetchVisitUser() {
       try {
         if (!visit.user_id) {
           setVisitUserFullName(userReadableName);
@@ -129,16 +124,16 @@ export function CommentsModal({
             .join(" ") || userReadableName;
         setVisitUserFullName(full);
         setVisitUserUsername(profile.username || null);
-      } catch (error) {
+      } catch {
         setVisitUserFullName(userReadableName);
       }
-    };
+    }
 
     if (visible) {
       fetchComments();
       fetchVisitUser();
     }
-  }, [visible, visit.id]);
+  }, [visible, visit.id, visit.user_id, userReadableName]);
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && onClose()}>

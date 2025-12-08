@@ -22,7 +22,10 @@ export function useFollowUser(targetUserId: string) {
 
     async function fetchStatus() {
       try {
-        const following = await isFollowingUser(currentUserId as string, targetUserId as string);
+        const following = await isFollowingUser(
+          currentUserId as string,
+          targetUserId as string,
+        );
         if (!cancelled) {
           setIsFollowing(following);
         }

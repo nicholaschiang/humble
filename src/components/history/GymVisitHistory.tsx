@@ -35,7 +35,7 @@ export function GymVisitHistory({
   const [visits, setVisits] = useState<GymVisit[]>([]);
   const [exerciseTypes, setExerciseTypes] = useState<any[]>([]);
   const [exercisesMap, setExercisesMap] = useState<Record<string, Exercise[]>>(
-    {}
+    {},
   );
   const [setsMap, setSetsMap] = useState<Record<string, SetRow[]>>({});
   const [userProfiles, setUserProfiles] = useState<Record<string, string>>({});
@@ -103,13 +103,13 @@ export function GymVisitHistory({
               } catch {
                 setsAcc[ex.id] = [];
               }
-            })
+            }),
           );
 
           if (visit.user_id && !profilesAcc[visit.user_id]) {
             try {
               const { first_name, last_name, username } = await getUserProfile(
-                visit.user_id
+                visit.user_id,
               );
               const readableName =
                 first_name || last_name
@@ -119,7 +119,7 @@ export function GymVisitHistory({
             } catch {
               console.log(
                 "Failed to fetch user profile for user ID:",
-                visit.user_id
+                visit.user_id,
               );
               profilesAcc[visit.user_id] = "Unknown User";
             }
@@ -162,7 +162,7 @@ export function GymVisitHistory({
         console.error("Failed to delete gym visit:", err);
       }
     },
-    [load]
+    [load],
   );
 
   return (

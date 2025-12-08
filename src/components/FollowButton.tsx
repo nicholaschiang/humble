@@ -12,7 +12,9 @@ export function FollowButton({ targetUserId, className }: FollowButtonProps) {
   const { isFollowing, loading, toggleFollow } = useFollowUser(targetUserId);
 
   const baseClasses = "rounded-full px-4";
-  const stateClasses = isFollowing ? "bg-muted border border-border" : "bg-green-700";
+  const stateClasses = isFollowing
+    ? "bg-muted border border-border"
+    : "bg-green-700";
 
   return (
     <Button

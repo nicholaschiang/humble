@@ -71,13 +71,13 @@ export function VisitCard({
   const [commentCount, setCommentCount] = useState(0);
   const [commentsVisible, setCommentsVisible] = useState(false);
   const [visitUserFullName, setVisitUserFullName] = useState<string | null>(
-    null
+    null,
   );
   const [visitUserUsername, setVisitUserUsername] = useState<string | null>(
-    null
+    null,
   );
   const [visitUserImageUrl, setVisitUserImageUrl] = useState<string | null>(
-    null
+    null,
   );
   const [expanded, setExpanded] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -319,7 +319,7 @@ export function VisitCard({
                 <Text className="text-lg font-semibold">
                   {getExerciseTypeName(
                     ex.exercise_type_id || "",
-                    exerciseTypes
+                    exerciseTypes,
                   )}
                 </Text>
 

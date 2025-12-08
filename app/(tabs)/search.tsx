@@ -3,6 +3,7 @@ import { View, TextInput, Keyboard, Pressable, FlatList } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 
 const MOCK_USERS: UserResult[] = [
   { id: "1", username: "cole_strong", fullName: "Cole Strong" },
@@ -118,15 +119,22 @@ export default function SearchScreen() {
               }}
               renderItem={({ item }) => (
                 <Pressable className="flex-row items-center justify-between px-2 py-3 border-b border-border">
-                  <View>
-                    <Text className="font-semibold">{item.username}</Text>
-                    {item.fullName ? (
-                      <Text className="text-xs text-muted-foreground">
-                        {item.fullName}
-                      </Text>
-                    ) : null}
+                  {/* Left: Avatar + Name */}
+                  <View className="flex-row items-center gap-3">
+                    {/* Pass nothing for now → default avatar shows */}
+                    <ProfileAvatar uri={null} size={40} />
+
+                    <View>
+                      <Text className="font-semibold">{item.username}</Text>
+                      {item.fullName ? (
+                        <Text className="text-xs text-muted-foreground">
+                          {item.fullName}
+                        </Text>
+                      ) : null}
+                    </View>
                   </View>
 
+                  {/* Right: Follow button */}
                   <Button size="sm" className="bg-green-700 rounded-full px-4">
                     <Text className="font-semibold">Follow</Text>
                   </Button>

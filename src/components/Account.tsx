@@ -3,13 +3,14 @@ import {
   FormContainer,
   FormField,
 } from "@/components/FormContainer";
-import { uploadProfileImage } from "@/service/ProfileBucketService"; // 👈 add this
+import { uploadProfileImage } from "@/service/ProfileBucketService";
 import { getProfile, logout, updateProfile } from "@/service/ProfileService";
 import { Session } from "@supabase/supabase-js";
-import * as ImagePicker from "expo-image-picker"; // 👈 new
+import * as ImagePicker from "expo-image-picker";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, Image } from "react-native"; // 👈 make sure Image is from react-native
+import { Alert, View } from "react-native";
 
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
@@ -78,7 +79,7 @@ export function Account({ session }: { session: Session }) {
 
       // 2. Launch image picker
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: "images", // ✅ correct for expo-image-picker 17
+        mediaTypes: "images",
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
@@ -122,19 +123,11 @@ export function Account({ session }: { session: Session }) {
 
   return (
     <FormContainer>
-      {/* Profile Image */}
-      {imageUrl ? (
-        <Image
-          source={{ uri: imageUrl }}
-          style={{
-            width: 120,
-            height: 120,
-            borderRadius: 60,
-            alignSelf: "center",
-            marginBottom: 12,
-          }}
-        />
-      ) : null}
+      {/* Profile Avatar (replaces <Image>) */}
+      <View style={{ alignItems: "center", marginBottom: 12 }}>
+        <ProfileAvatar uri={imageUrl} size={120} />
+      </View>
+
 
       {/* Change Photo button */}
       <Button variant="outline" onPress={handleChangePhoto} disabled={loading}>
@@ -144,12 +137,15 @@ export function Account({ session }: { session: Session }) {
       <FormField label="Email">
         <Input value={session?.user?.email} readOnly />
       </FormField>
+
       <FormField label="Username">
         <Input value={username || ""} onChangeText={setUsername} />
       </FormField>
+
       <FormField label="First name">
         <Input value={firstName ?? ""} onChangeText={setFirstName} />
       </FormField>
+
       <FormField label="Last name">
         <Input value={lastName ?? ""} onChangeText={setLastName} />
       </FormField>
@@ -158,6 +154,7 @@ export function Account({ session }: { session: Session }) {
         <Button onPress={handleUpdateProfile} disabled={loading}>
           <Text>{loading ? "Loading ..." : "Update"}</Text>
         </Button>
+
         <Button variant="outline" onPress={logout}>
           <Text>Sign out</Text>
         </Button>

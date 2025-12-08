@@ -37,6 +37,20 @@ export async function GetLikeCountForGymVisit(gymVisitId: string) {
   return count || 0;
 }
 
+export async function GetCommentCountForGymVisit(gymVisitId: string) {
+  const { count, error } = await supabase
+    .from("Comment")
+    .select("*", { count: "exact", head: true })
+    .eq("gym_visit_id", gymVisitId);
+
+  if (error) {
+    console.log("Error fetching comment count for gym visit:", error);
+    throw error;
+  }
+
+  return count || 0;
+}
+
 export async function UserLikesGymVisit(userId: string, gymVisitId: string) {
   const { data, error } = await supabase
     .from("Like")

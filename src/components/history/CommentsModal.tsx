@@ -6,6 +6,7 @@ import { AddComment, GetCommentsForGymVisit } from "@/service/SocialService";
 import { formatDistanceToNow } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { ScrollView, TextInput, View } from "react-native";
+import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Text } from "../ui/text";
 
@@ -29,6 +30,7 @@ type CommentsModalProps = {
   setsMap: Record<string, Tables<"Set">[]>;
   exerciseTypes: any[];
   userReadableName: string;
+  onCommentAdded?: () => void;
 };
 
 export function CommentsModal({
@@ -39,6 +41,7 @@ export function CommentsModal({
   setsMap,
   exerciseTypes,
   userReadableName,
+  onCommentAdded,
 }: CommentsModalProps) {
   const session = useSession();
   const [visitUserFullName, setVisitUserFullName] = useState<string | null>(null);
@@ -70,6 +73,7 @@ export function CommentsModal({
       };
 
       setComments((prev) => [...prev, addedComment]);
+  if (onCommentAdded) onCommentAdded();
       setNewComment("");
     } catch (error) {
       console.error("Failed to add comment:", error);
@@ -126,6 +130,11 @@ export function CommentsModal({
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
+        <View style={{ position: "absolute", top: 8, right: 8, zIndex: 50 }}>
+          <Button variant="ghost" size="icon" onPress={onClose} accessibilityLabel="Close comments">
+            <Text style={{ fontSize: 16, fontWeight: "700" }}>✕</Text>
+          </Button>
+        </View>
         <DialogHeader>
           <DialogTitle>Comments</DialogTitle>
         </DialogHeader>
@@ -146,17 +155,13 @@ export function CommentsModal({
                     )}
                   </Text>
 
-                  <Text className="text-sm text-muted-foreground mt-1">
-                    {setsMap[ex.id]?.map(
-                      (set: Tables<"Set">, index: number) => (
-                        <Text key={index}>
-                          {index + 1}. Reps: {set.reps}, Weight: {set.weight},
-                          Duration: {set.duration_sec}s, Distance:{" "}
-                          {set.distance_mi}mi
-                        </Text>
-                      ),
-                    )}
-                  </Text>
+                      <View className="mt-1">
+                        {setsMap[ex.id]?.map((set: Tables<"Set">, index: number) => (
+                          <Text key={index} className="text-sm text-muted-foreground">
+                            {index + 1}. Reps: {set.reps}, Weight: {set.weight}, Duration: {set.duration_sec}s, Distance: {set.distance_mi}mi
+                          </Text>
+                        ))}
+                      </View>
                 </View>
               ))}
             </View>

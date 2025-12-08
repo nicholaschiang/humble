@@ -1,11 +1,11 @@
 import { Tables } from "@/lib/database.types";
 import { formatGymVisitDate, getExerciseTypeName } from "@/lib/workout-utils";
+import { AddLike, RemoveLike, UserLikesGymVisit } from "@/service/SocialService";
 import { FontAwesome } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
-import { AddLike, RemoveLike } from "@/service/SocialService";
 
 type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
@@ -66,6 +66,21 @@ export function VisitCard({
   currentUserId?: string | null;
 }) {
   const [liked, setLiked] = useState(false);
+
+  useEffect(() => {
+    const fetchLikeStatus = async () => {
+      if (!currentUserId) return;
+
+      try {
+        const isLiked = await UserLikesGymVisit(currentUserId, visit.id);
+        setLiked(isLiked);
+      } catch (error) {
+        console.error("Failed to fetch like status:", error);
+      }
+    };
+
+    fetchLikeStatus();
+  }, [currentUserId, visit.id]);
 
   const toggleLike = async () => {
     if (!currentUserId) return;

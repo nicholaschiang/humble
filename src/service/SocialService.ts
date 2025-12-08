@@ -37,6 +37,25 @@ export async function GetLikesForGymVisit(gymVisitId: string) {
   return data || [];
 }
 
+export async function UserLikesGymVisit(
+  userId: string,
+  gymVisitId: string,
+) {
+  const { data, error } = await supabase
+    .from("Like")
+    .select()
+    .eq("gym_visit_id", gymVisitId)
+    .eq("liker_id", userId)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    console.log("Error checking if user likes gym visit:", error);
+    throw error;
+  }
+
+  return data !== null;
+}
+
 export async function AddComment(
   userId: string,
   gymVisitId: string,

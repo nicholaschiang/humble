@@ -1,6 +1,6 @@
 import { Tables } from "@/lib/database.types";
 import { useSession } from "@/lib/session";
-import { formatGymVisitDate, getExerciseTypeName } from "@/lib/workout-utils";
+import { getExerciseTypeName } from "@/lib/workout-utils";
 import { getUserProfile } from "@/service/AuthService";
 import { AddComment, GetCommentsForGymVisit } from "@/service/SocialService";
 import { formatDistanceToNow } from "date-fns";
@@ -41,6 +41,8 @@ export function CommentsModal({
   userReadableName,
 }: CommentsModalProps) {
   const session = useSession();
+  const [visitUserFullName, setVisitUserFullName] = useState<string | null>(null);
+  const [visitUserUsername, setVisitUserUsername] = useState<string | null>(null);
   const [comments, setComments] = useState<FormattedComment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -100,8 +102,24 @@ export function CommentsModal({
       }
     };
 
+    const fetchVisitUser = async () => {
+      try {
+        if (!visit.user_id) {
+          setVisitUserFullName(userReadableName);
+          return;
+        }
+        const profile = await getUserProfile(visit.user_id);
+        const full = [profile.first_name || "", profile.last_name || ""].filter(Boolean).join(" ") || userReadableName;
+        setVisitUserFullName(full);
+        setVisitUserUsername(profile.username || null);
+      } catch (error) {
+        setVisitUserFullName(userReadableName);
+      }
+    };
+
     if (visible) {
       fetchComments();
+      fetchVisitUser();
     }
   }, [visible, visit.id]);
 
@@ -112,11 +130,9 @@ export function CommentsModal({
           <DialogTitle>Comments</DialogTitle>
         </DialogHeader>
         <ScrollView>
-          <Text className="text-2xl font-semibold">
-            {formatGymVisitDate(visit.created_at)}
-          </Text>
-          <Text className="text-sm text-muted-foreground mt-1">
-            By {userReadableName}
+          <Text>
+            <Text className="text-2xl font-semibold">{`${visitUserFullName ?? userReadableName}${visitUserUsername ? ` (${visitUserUsername})` : ""}`}</Text>
+            <Text className="text-sm text-muted-foreground">{` • ${formatDistanceToNow(new Date(visit.created_at), { addSuffix: true })}`}</Text>
           </Text>
 
           {exercises.length > 0 && (
@@ -165,7 +181,8 @@ export function CommentsModal({
               comments.map((comment: FormattedComment, index: number) => (
                 <View key={index} className="mb-2">
                   <Text className="text-xs text-muted-foreground">
-                    {`${comment.commenter_name} (${comment.commenter_username}) • ${formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}`}
+                    <Text className="font-semibold">{`${comment.commenter_name} (${comment.commenter_username})`}</Text>
+                    <Text className="text-xs text-muted-foreground">{` • ${formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}`}</Text>
                   </Text>
                   <Text className="text-sm text-muted-foreground">
                     {comment.content}

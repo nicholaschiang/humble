@@ -1,5 +1,6 @@
 import { Tables } from "@/lib/database.types";
-import { formatGymVisitDate, getExerciseTypeName } from "@/lib/workout-utils";
+import { getExerciseTypeName } from "@/lib/workout-utils";
+import { getUserProfile } from "@/service/AuthService";
 import {
   AddLike,
   GetLikeCountForGymVisit,
@@ -8,6 +9,7 @@ import {
 } from "@/service/SocialService";
 import { FontAwesome } from "@expo/vector-icons";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { formatDistanceToNow } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Button } from "../ui/button";
@@ -86,6 +88,8 @@ export function VisitCard({
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [commentsVisible, setCommentsVisible] = useState(false);
+  const [visitUserFullName, setVisitUserFullName] = useState<string | null>(null);
+  const [visitUserUsername, setVisitUserUsername] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLikeStatusAndCount = async () => {
@@ -105,6 +109,25 @@ export function VisitCard({
 
     fetchLikeStatusAndCount();
   }, [currentUserId, visit.id]);
+
+  useEffect(() => {
+    const fetchVisitUser = async () => {
+      try {
+        if (!visit.user_id) {
+          setVisitUserFullName(userReadableName);
+          return;
+        }
+        const profile = await getUserProfile(visit.user_id);
+        const full = [profile.first_name || "", profile.last_name || ""].filter(Boolean).join(" ") || userReadableName;
+        setVisitUserFullName(full);
+        setVisitUserUsername(profile.username || null);
+      } catch (error) {
+        setVisitUserFullName(userReadableName);
+      }
+    };
+
+    fetchVisitUser();
+  }, [visit.user_id, userReadableName]);
 
   const toggleLike = async () => {
     if (!currentUserId) return;
@@ -133,11 +156,11 @@ export function VisitCard({
         <DeleteVisitButton onDelete={onDelete} visitId={visit.id} />
       )}
       <View className="p-4">
-        <Text className="text-2xl font-semibold">
-          {formatGymVisitDate(visit.created_at)}
-        </Text>
-        <Text className="text-sm text-muted-foreground mt-1">
-          By {userReadableName}
+        <Text>
+          <Text className="text-2xl font-semibold">
+            {`${visitUserFullName ?? userReadableName}${visitUserUsername ? ` (${visitUserUsername})` : ""}`}
+          </Text>
+          <Text className="text-sm text-muted-foreground">{` • ${formatDistanceToNow(new Date(visit.created_at), { addSuffix: true })}`}</Text>
         </Text>
 
         {exercises.length > 0 && (

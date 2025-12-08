@@ -72,8 +72,9 @@ export function CommentsModal({
         gym_visit_id: addedCommentResponse.gym_visit_id,
       };
 
-      setComments((prev) => [...prev, addedComment]);
-  if (onCommentAdded) onCommentAdded();
+    // insert newest comment at the top
+    setComments((prev) => [addedComment, ...prev]);
+    if (onCommentAdded) onCommentAdded();
       setNewComment("");
     } catch (error) {
       console.error("Failed to add comment:", error);
@@ -100,7 +101,11 @@ export function CommentsModal({
             };
           }),
         );
-        setComments(formattedComments);
+        // sort newest first
+        const sorted = formattedComments.sort((a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        );
+        setComments(sorted);
       } catch (error) {
         console.error("Failed to fetch comments:", error);
       }

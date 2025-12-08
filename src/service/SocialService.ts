@@ -37,10 +37,7 @@ export async function GetLikeCountForGymVisit(gymVisitId: string) {
   return count || 0;
 }
 
-export async function UserLikesGymVisit(
-  userId: string,
-  gymVisitId: string,
-) {
+export async function UserLikesGymVisit(userId: string, gymVisitId: string) {
   const { data, error } = await supabase
     .from("Like")
     .select()
@@ -66,7 +63,7 @@ export async function AddComment(
     .insert({
       commenter_id: userId,
       gym_visit_id: gymVisitId,
-      content: content,
+      comment: content,
     })
     .select()
     .single();

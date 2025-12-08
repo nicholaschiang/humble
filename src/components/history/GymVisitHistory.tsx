@@ -174,7 +174,6 @@ export function GymVisitHistory({
       }}
     >
       <View className="px-2 pt-4">
-        {/* Optional header (e.g., avatar + name in SingleUserHistory) */}
         {header}
 
         <Text className="text-2xl font-bold mb-3">{title}</Text>

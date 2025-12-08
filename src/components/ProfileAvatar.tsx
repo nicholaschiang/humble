@@ -14,10 +14,7 @@ export function ProfileAvatar({ uri, size = 96 }: ProfileAvatarProps) {
 
   return (
     <View
-      style={[
-        styles.container,
-        { width: size, height: size, borderRadius },
-      ]}
+      style={[styles.container, { width: size, height: size, borderRadius }]}
     >
       <Image
         source={uri ? { uri } : DEFAULT_AVATAR}

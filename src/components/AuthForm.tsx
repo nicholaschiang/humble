@@ -153,7 +153,6 @@ export function AuthForm() {
             </View>
           )}
 
-
           <Button
             variant="outline"
             disabled={loading}

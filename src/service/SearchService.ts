@@ -7,7 +7,7 @@ export type ProfileRow = {
   username: string;
   first_name: string | null;
   last_name: string | null;
-  // add more fields if you want them in the UI
+  image_url: string | null;// add more fields if you want them in the UI
 };
 
 export async function searchProfiles(

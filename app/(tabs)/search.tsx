@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
 import { searchProfiles } from "@/service/SearchService";
 import { FollowButton } from "@/components/FollowButton";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 
 //TODO:
 // Make it so pressing on follower goes to their profile
@@ -13,6 +14,7 @@ type UserResult = {
   userId: string;
   username: string;
   fullName?: string | null;
+  imageUrl?: string | null;
 };
 
 export default function SearchScreen() {
@@ -45,6 +47,7 @@ export default function SearchScreen() {
           userId: row.user_id,
           username: row.username,
           fullName: fullNameParts.length ? fullNameParts.join(" ") : null,
+          imageUrl: row.image_url ?? null,
         };
       });
 
@@ -128,7 +131,7 @@ export default function SearchScreen() {
                   {/* Left: Avatar + Name */}
                   <View className="flex-row items-center gap-3">
                     {/* Pass nothing for now → default avatar shows */}
-                    <ProfileAvatar uri={null} size={40} />
+                    <ProfileAvatar uri={item.imageUrl ?? null} size={40} />
 
                     <View>
                       <Text className="font-semibold">{item.username}</Text>

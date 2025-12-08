@@ -2,7 +2,6 @@ import { supabase } from "@/lib/supabase";
 
 export async function AddLike(userId: string, gymVisitId: string) {
   const { error } = await supabase.from("Like").insert({
-    created_at: new Date().toISOString(),
     gym_visit_id: gymVisitId,
     liker_id: userId,
   });

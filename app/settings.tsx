@@ -16,10 +16,7 @@ export default function Settings() {
   if (!session?.user) return null;
 
   return (
-    <View
-      className="flex-1 bg-background"
-      style={{ paddingTop: insets.top }}
-    >
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Header with Back button */}
       <View className="flex-row items-center px-4 pb-2">
         <Pressable

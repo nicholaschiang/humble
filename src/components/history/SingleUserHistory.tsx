@@ -19,7 +19,7 @@ export function SingleUserHistory({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadProfile = async () => {
+    async function loadProfile() {
       try {
         setLoading(true);
         const data = await getProfile(userId);
@@ -29,7 +29,7 @@ export function SingleUserHistory({ userId }: { userId: string }) {
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     loadProfile();
   }, [userId]);
@@ -37,7 +37,7 @@ export function SingleUserHistory({ userId }: { userId: string }) {
   const displayName =
     profile?.first_name || profile?.last_name
       ? `${profile?.first_name ?? ""} ${profile?.last_name ?? ""}`.trim()
-      : profile?.username ?? "User";
+      : (profile?.username ?? "User");
 
   const username = profile?.username ?? "User";
 
@@ -58,9 +58,7 @@ export function SingleUserHistory({ userId }: { userId: string }) {
               <ProfileAvatar uri={profile?.image_url ?? null} size={100} />
 
               {/* Display name below avatar */}
-              <Text className="text-lg font-semibold mt-2">
-                {displayName}
-              </Text>
+              <Text className="text-lg font-semibold mt-2">{displayName}</Text>
             </>
           )}
         </View>

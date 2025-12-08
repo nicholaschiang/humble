@@ -128,7 +128,6 @@ export function Account({ session }: { session: Session }) {
         <ProfileAvatar uri={imageUrl} size={120} />
       </View>
 
-
       {/* Change Photo button */}
       <Button variant="outline" onPress={handleChangePhoto} disabled={loading}>
         <Text>Change Photo</Text>

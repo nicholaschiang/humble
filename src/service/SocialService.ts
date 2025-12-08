@@ -23,18 +23,18 @@ export async function RemoveLike(userId: string, gymVisitId: string) {
   }
 }
 
-export async function GetLikesForGymVisit(gymVisitId: string) {
-  const { data, error } = await supabase
+export async function GetLikeCountForGymVisit(gymVisitId: string) {
+  const { count, error } = await supabase
     .from("Like")
-    .select()
+    .select("*", { count: "exact", head: true })
     .eq("gym_visit_id", gymVisitId);
 
   if (error) {
-    console.log("Error fetching likes for gym visit:", error);
+    console.log("Error fetching like count for gym visit:", error);
     throw error;
   }
 
-  return data || [];
+  return count || 0;
 }
 
 export async function UserLikesGymVisit(

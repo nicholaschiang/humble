@@ -14,6 +14,35 @@ export type Database = {
   };
   public: {
     Tables: {
+      Comment: {
+        Row: {
+          comment: string;
+          commenter_id: string;
+          created_at: string;
+          gym_visit_id: string;
+        };
+        Insert: {
+          comment?: string;
+          commenter_id?: string;
+          created_at?: string;
+          gym_visit_id?: string;
+        };
+        Update: {
+          comment?: string;
+          commenter_id?: string;
+          created_at?: string;
+          gym_visit_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Comment_gym_visit_id_fkey";
+            columns: ["gym_visit_id"];
+            isOneToOne: false;
+            referencedRelation: "GymVisit";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       Exercise: {
         Row: {
           created_at: string;
@@ -55,6 +84,7 @@ export type Database = {
           author_id: string | null;
           created_at: string;
           description: string | null;
+          Global: boolean;
           id: string;
           name: string;
         };
@@ -62,6 +92,7 @@ export type Database = {
           author_id?: string | null;
           created_at?: string;
           description?: string | null;
+          Global?: boolean;
           id?: string;
           name?: string;
         };
@@ -69,6 +100,7 @@ export type Database = {
           author_id?: string | null;
           created_at?: string;
           description?: string | null;
+          Global?: boolean;
           id?: string;
           name?: string;
         };
@@ -116,27 +148,53 @@ export type Database = {
         };
         Relationships: [];
       };
+      Like: {
+        Row: {
+          created_at: string;
+          gym_visit_id: string;
+          liker_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          gym_visit_id?: string;
+          liker_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          gym_visit_id?: string;
+          liker_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Like_gym_visit_id_fkey";
+            columns: ["gym_visit_id"];
+            isOneToOne: false;
+            referencedRelation: "GymVisit";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       Profile: {
         Row: {
           first_name: string | null;
+          image_url: string | null;
           last_name: string | null;
           user_id: string;
           username: string;
-          image_url: string | null;
         };
         Insert: {
           first_name?: string | null;
+          image_url?: string | null;
           last_name?: string | null;
           user_id?: string;
           username: string;
-          image_url?: string | null;
         };
         Update: {
           first_name?: string | null;
+          image_url?: string | null;
           last_name?: string | null;
           user_id?: string;
           username?: string;
-          image_url?: string | null;
         };
         Relationships: [];
       };
@@ -183,7 +241,24 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      search_profiles: {
+        Args: { max_results?: number; q: string };
+        Returns: {
+          first_name: string | null;
+          image_url: string | null;
+          last_name: string | null;
+          user_id: string;
+          username: string;
+        }[];
+        SetofOptions: {
+          from: "*";
+          to: "Profile";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      show_limit: { Args: never; Returns: number };
+      show_trgm: { Args: { "": string }; Returns: string[] };
     };
     Enums: {
       [_ in never]: never;

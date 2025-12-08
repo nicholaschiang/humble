@@ -1,6 +1,6 @@
 import { Tables } from "@/lib/database.types";
 import { formatGymVisitDate, getExerciseTypeName } from "@/lib/workout-utils";
-import { AddLike, RemoveLike, UserLikesGymVisit } from "@/service/SocialService";
+import { AddLike, GetLikeCountForGymVisit, RemoveLike, UserLikesGymVisit } from "@/service/SocialService";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -66,20 +66,25 @@ export function VisitCard({
   currentUserId?: string | null;
 }) {
   const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
-    const fetchLikeStatus = async () => {
+    const fetchLikeStatusAndCount = async () => {
       if (!currentUserId) return;
 
       try {
-        const isLiked = await UserLikesGymVisit(currentUserId, visit.id);
+        const [isLiked, count] = await Promise.all([
+          UserLikesGymVisit(currentUserId, visit.id),
+          GetLikeCountForGymVisit(visit.id),
+        ]);
         setLiked(isLiked);
+        setLikeCount(count);
       } catch (error) {
-        console.error("Failed to fetch like status:", error);
+        console.error("Failed to fetch like status or count:", error);
       }
     };
 
-    fetchLikeStatus();
+    fetchLikeStatusAndCount();
   }, [currentUserId, visit.id]);
 
   const toggleLike = async () => {
@@ -88,8 +93,10 @@ export function VisitCard({
     try {
       if (liked) {
         await RemoveLike(currentUserId, visit.id);
+        setLikeCount((prev) => Math.max(prev - 1, 0));
       } else {
         await AddLike(currentUserId, visit.id);
+        setLikeCount((prev) => prev + 1);
       }
       setLiked(!liked);
     } catch (error) {
@@ -146,6 +153,7 @@ export function VisitCard({
             onPress={toggleLike}
             accessibilityLabel={`Toggle like for visit ${visit.id}`}
           >
+            <Text className="text-foreground font-semibold mr-2">{likeCount}</Text>
             <FontAwesome
               name={liked ? "thumbs-up" : "thumbs-o-up"}
               size={16}

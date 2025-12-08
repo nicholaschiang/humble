@@ -1,7 +1,8 @@
-import { Account } from "@/components/Account";
+import { SingleUserHistory } from "@/components/history/SingleUserHistory";
+
 import { useSession } from "@/lib/session";
 
 export default function You() {
   const session = useSession();
-  return <Account session={session} />;
+  return <SingleUserHistory userId={session.user.id} />;
 }

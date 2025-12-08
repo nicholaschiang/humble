@@ -1,5 +1,18 @@
 import { supabase } from "@/lib/supabase";
 
+export async function getUserProfile(userId: string) {
+  const { data, error } = await supabase
+    .from("Profile")
+    .select()
+    .eq("user_id", userId)
+    .single();
+  if (error) {
+    console.log("Error fetching user profile:", error);
+    throw error;
+  }
+  return data;
+}
+
 async function createProfile(
   userId: string,
   username: string,

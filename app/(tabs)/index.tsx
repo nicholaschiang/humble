@@ -1,5 +1,8 @@
-import { Placeholder } from "@/components/Placeholder";
+import { UserFeed } from "@/components/history/UserFeed";
+
+import { useSession } from "@/lib/session";
 
 export default function Home() {
-  return <Placeholder>Home</Placeholder>;
+  const session = useSession();
+  return <UserFeed userId={session.user.id} />;
 }

@@ -31,5 +31,5 @@ export async function searchProfiles(
     throw error;
   }
 
-  return (data ?? []) as ProfileRow[];
+  return (data ?? []) as unknown as ProfileRow[];
 }

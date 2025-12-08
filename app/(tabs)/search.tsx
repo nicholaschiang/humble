@@ -7,9 +7,6 @@ import { FollowButton } from "@/components/FollowButton";
 
 //TODO:
 // Make it so pressing on follower goes to their profile
-// Make it so that you can unfollow from search bar too
-// Indicate if already following users in the list
-// Make sure you can't follow someone you're already following
 
 type UserResult = {
   id: string;
@@ -136,15 +133,6 @@ export default function SearchScreen() {
                       </Text>
                     ) : null}
                   </View>
-
-                  {/* <Button
-                    size="sm"
-                    className="bg-green-700 rounded-full px-4"
-                    onPress={() => handleFollow(item.userId)}
-                  >
-                    <Text className="font-semibold">Follow</Text>
-                  </Button> */}
-                  {/* item.userId is the auth.users id / Follow table id */}
                   <FollowButton targetUserId={item.userId} />
                 </Pressable>
               )}

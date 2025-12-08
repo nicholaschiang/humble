@@ -24,7 +24,7 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
   const [visits, setVisits] = useState<GymVisit[]>([]);
   const [exerciseTypes, setExerciseTypes] = useState<any[]>([]);
   const [exercisesMap, setExercisesMap] = useState<Record<string, Exercise[]>>(
-    {},
+    {}
   );
   const [setsMap, setSetsMap] = useState<Record<string, SetRow[]>>({});
   const [userProfiles, setUserProfiles] = useState<Record<string, string>>({});
@@ -95,14 +95,14 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
               } catch {
                 setsAcc[ex.id] = [];
               }
-            }),
+            })
           );
 
           // Fetch user profile if not already cached
           if (visit.user_id && !profilesAcc[visit.user_id]) {
             try {
               const { first_name, last_name, username } = await getUserProfile(
-                visit.user_id,
+                visit.user_id
               );
               const readableName =
                 first_name || last_name
@@ -112,7 +112,7 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
             } catch {
               console.log(
                 "Failed to fetch user profile for user ID:",
-                visit.user_id,
+                visit.user_id
               );
               profilesAcc[visit.user_id] = "Unknown User";
             }
@@ -155,7 +155,7 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
         console.error("Failed to delete gym visit:", err);
       }
     },
-    [load],
+    [load]
   );
 
   return (
@@ -166,11 +166,20 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
         paddingBottom: insets.bottom,
       }}
     >
-      <View className="px-2 pt-4">
+      <View
+        className="px-2 pt-4"
+        style={{
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom + 60,
+        }}
+      >
         <Text className="text-2xl font-bold mb-3">{title}</Text>
 
         <ScrollView
-          contentContainerStyle={{ padding: 16, paddingBottom: 48 }}
+          contentContainerStyle={{
+            padding: 16,
+            paddingBottom: insets.bottom,
+          }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

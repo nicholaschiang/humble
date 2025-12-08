@@ -21,6 +21,7 @@ import {
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
 import { CommentsModal } from "./CommentsModal";
+import { ProfileAvatar } from "../ProfileAvatar";
 
 type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
@@ -75,6 +76,9 @@ export function VisitCard({
   const [visitUserUsername, setVisitUserUsername] = useState<string | null>(
     null
   );
+  const [visitUserImageUrl, setVisitUserImageUrl] = useState<string | null>(
+    null
+  );
   const [expanded, setExpanded] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -117,6 +121,7 @@ export function VisitCard({
 
         setVisitUserFullName(full);
         setVisitUserUsername(profile.username || null);
+        setVisitUserImageUrl(profile.image_url || null);
       } catch {
         setVisitUserFullName(userReadableName);
       }
@@ -165,9 +170,8 @@ export function VisitCard({
     return acc + volumeForExercise;
   }, 0);
 
-  const uniqueLiftCount = new Set(
-    exercises.map((ex) => ex.exercise_type_id)
-  ).size;
+  const uniqueLiftCount = new Set(exercises.map((ex) => ex.exercise_type_id))
+    .size;
 
   return (
     <View
@@ -180,7 +184,6 @@ export function VisitCard({
         backgroundColor: "#161618ff",
       }}
     >
-
       {/* -------- 3-DOTS MENU -------- */}
       {isOwner && onDelete && (
         <>
@@ -256,15 +259,32 @@ export function VisitCard({
 
       {/* -------- CARD CONTENT -------- */}
       <View className="p-4">
-
         {/* HEADER */}
         <Pressable
           onPress={handleToggleExpanded}
           //className="flex-row items-center justify-between"
         >
           <View className="flex-row items-center justify-between">
-          <View className="flex-1 mr-2">
-            <Text className="text-2xl font-semibold">{displayName}</Text>
+            <View
+              style={{
+                right: 10,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <ProfileAvatar uri={visitUserImageUrl ?? null} size={60} />
+            </View>
+            <View className="flex-1 mr-2">
+              <Text className="text-2xl font-semibold">{displayName}</Text>
+            </View>
+
+            <FontAwesome
+              name={expanded ? "chevron-up" : "chevron-down"}
+              size={18}
+              color="#FFF"
+            />
+          </View>
+          <View className="mt-2" style={{ top: 4 }}>
             <Text className="text-sm text-muted-foreground">
               {formatDistanceToNow(new Date(visit.created_at), {
                 addSuffix: true,
@@ -272,30 +292,23 @@ export function VisitCard({
             </Text>
           </View>
 
-          <FontAwesome
-            name={expanded ? "chevron-up" : "chevron-down"}
-            size={18}
-            color="#FFF"
-          />
-          </View>
-
           {exercises.length > 0 && (
-          <View className="mt-2">
-            <Text className="text-sm text-muted-foreground">
-              Total Weight:{" "}
-              <Text className="text-green-600 font-semibold">
-                {totalVolume} lbs
+            <View className="mt-2">
+              <Text className="text-sm text-muted-foreground">
+                Total Weight:{" "}
+                <Text className="text-green-600 font-semibold">
+                  {totalVolume} lbs
+                </Text>
               </Text>
-            </Text>
 
-            <Text className="text-sm text-muted-foreground">
-              Unique Lifts:{" "}
-              <Text className="text-green-700 font-semibold">
-                {uniqueLiftCount}
+              <Text className="text-sm text-muted-foreground">
+                Unique Lifts:{" "}
+                <Text className="text-green-700 font-semibold">
+                  {uniqueLiftCount}
+                </Text>
               </Text>
-            </Text>
-          </View>
-        )}
+            </View>
+          )}
         </Pressable>
 
         {/* -------- DETAILS (only expanded) -------- */}

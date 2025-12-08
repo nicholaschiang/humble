@@ -1,16 +1,16 @@
-import "react-native-reanimated";
 import "@/global.css";
+import "react-native-reanimated";
 
-import { AppState } from "react-native";
-import { ThemeProvider } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
-import { PortalHost } from "@rn-primitives/portal";
-import { NAV_THEME, DEFAULT_COLOR_SCHEME } from "@/lib/theme";
-import { useColorScheme } from "nativewind";
-import { Stack } from "expo-router";
 import { SessionProvider, useSessionState } from "@/lib/session";
 import { SplashScreenController } from "@/lib/splash";
 import { supabase } from "@/lib/supabase";
+import { DEFAULT_COLOR_SCHEME, NAV_THEME } from "@/lib/theme";
+import { ThemeProvider } from "@react-navigation/native";
+import { PortalHost } from "@rn-primitives/portal";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "nativewind";
+import { AppState } from "react-native";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive

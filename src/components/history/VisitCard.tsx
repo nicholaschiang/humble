@@ -1,11 +1,18 @@
 import { Tables } from "@/lib/database.types";
 import { formatGymVisitDate, getExerciseTypeName } from "@/lib/workout-utils";
-import { AddLike, GetLikeCountForGymVisit, RemoveLike, UserLikesGymVisit } from "@/service/SocialService";
+import {
+  AddLike,
+  GetLikeCountForGymVisit,
+  RemoveLike,
+  UserLikesGymVisit,
+} from "@/service/SocialService";
 import { FontAwesome } from "@expo/vector-icons";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
+import { CommentsModal } from "./CommentsModal";
 
 type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
@@ -48,6 +55,16 @@ function DeleteVisitButton({
   );
 }
 
+type NavigationParams = NavigationProp<{
+  CommentsPage: {
+    visit: GymVisit;
+    exercises: Exercise[];
+    setsMap: Record<string, SetRow[]>;
+    exerciseTypes: any[];
+    userReadableName: string;
+  };
+}>;
+
 export function VisitCard({
   visit,
   exercises,
@@ -65,8 +82,10 @@ export function VisitCard({
   onDelete?: (id: string) => Promise<void>;
   currentUserId?: string | null;
 }) {
+  const navigation = useNavigation<NavigationParams>();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [commentsVisible, setCommentsVisible] = useState(false);
 
   useEffect(() => {
     const fetchLikeStatusAndCount = async () => {
@@ -142,10 +161,15 @@ export function VisitCard({
         <View className="mt-4 flex-row items-center">
           <Button
             className="bg-muted rounded-md px-3 py-2 flex-row items-center"
-            onPress={() => {}}
+            onPress={() => setCommentsVisible(true)}
             accessibilityLabel={`Open comments for visit ${visit.id}`}
           >
-            <FontAwesome name="comment" size={16} color="#FFF" style={{ marginRight: 8 }} />
+            <FontAwesome
+              name="comment"
+              size={16}
+              color="#FFF"
+              style={{ marginRight: 8 }}
+            />
             <Text className="text-foreground font-semibold">Comments</Text>
           </Button>
           <Button
@@ -153,7 +177,9 @@ export function VisitCard({
             onPress={toggleLike}
             accessibilityLabel={`Toggle like for visit ${visit.id}`}
           >
-            <Text className="text-foreground font-semibold mr-2">{likeCount}</Text>
+            <Text className="text-foreground font-semibold mr-2">
+              {likeCount}
+            </Text>
             <FontAwesome
               name={liked ? "thumbs-up" : "thumbs-o-up"}
               size={16}
@@ -166,6 +192,15 @@ export function VisitCard({
           </Button>
         </View>
       </View>
+      <CommentsModal
+        visible={commentsVisible}
+        onClose={() => setCommentsVisible(false)}
+        visit={visit}
+        exercises={exercises}
+        setsMap={setsMap}
+        exerciseTypes={exerciseTypes}
+        userReadableName={userReadableName}
+      />
     </View>
   );
 }

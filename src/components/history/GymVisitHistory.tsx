@@ -1,3 +1,4 @@
+// src/components/history/GymVisitHistory.tsx
 import { Tables } from "@/lib/database.types";
 import { useSessionState } from "@/lib/session";
 import { getUserProfile } from "@/service/AuthService";
@@ -8,7 +9,7 @@ import {
   getSetsByExercise,
 } from "@/service/WorkoutService";
 import { useIsFocused } from "@react-navigation/native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../ui/button";
@@ -19,7 +20,17 @@ type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
 type SetRow = Tables<"Set">;
 
-export function GymVisitHistory({ getGymVisits, title }: any) {
+type GymVisitHistoryProps = {
+  getGymVisits: () => Promise<GymVisit[]>;
+  title: string;
+  header?: ReactNode;
+};
+
+export function GymVisitHistory({
+  getGymVisits,
+  title,
+  header,
+}: GymVisitHistoryProps) {
   const insets = useSafeAreaInsets();
   const [visits, setVisits] = useState<GymVisit[]>([]);
   const [exerciseTypes, setExerciseTypes] = useState<any[]>([]);
@@ -59,7 +70,6 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
     load();
   }, [load]);
 
-  // Re-run load when the screen gains focus (e.g., switching tabs)
   useEffect(() => {
     if (isFocused) {
       load();
@@ -80,13 +90,11 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
       const setsAcc: Record<string, SetRow[]> = {};
       const profilesAcc: Record<string, string> = { ...userProfiles };
 
-      // Load all exercises for all visits
       const exercisePromises = visits.map(async (visit) => {
         try {
           const exs = await getExercisesByGymVisit(visit.id);
           exercisesAcc[visit.id] = exs || [];
 
-          // Load all sets for these exercises
           await Promise.all(
             (exs || []).map(async (ex) => {
               try {
@@ -98,7 +106,6 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
             })
           );
 
-          // Fetch user profile if not already cached
           if (visit.user_id && !profilesAcc[visit.user_id]) {
             try {
               const { first_name, last_name, username } = await getUserProfile(

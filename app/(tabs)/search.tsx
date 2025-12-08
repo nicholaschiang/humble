@@ -125,13 +125,19 @@ export default function SearchScreen() {
               }}
               renderItem={({ item }) => (
                 <Pressable className="flex-row items-center justify-between px-2 py-3 border-b border-border">
-                  <View>
-                    <Text className="font-semibold">{item.username}</Text>
-                    {item.fullName ? (
-                      <Text className="text-xs text-muted-foreground">
-                        {item.fullName}
-                      </Text>
-                    ) : null}
+                  {/* Left: Avatar + Name */}
+                  <View className="flex-row items-center gap-3">
+                    {/* Pass nothing for now → default avatar shows */}
+                    <ProfileAvatar uri={null} size={40} />
+
+                    <View>
+                      <Text className="font-semibold">{item.username}</Text>
+                      {item.fullName ? (
+                        <Text className="text-xs text-muted-foreground">
+                          {item.fullName}
+                        </Text>
+                      ) : null}
+                    </View>
                   </View>
                   <FollowButton targetUserId={item.userId} />
                 </Pressable>

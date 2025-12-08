@@ -1,9 +1,10 @@
 import { DEFAULT_COLOR_SCHEME, THEME } from "@/lib/theme";
 import { register, signIn } from "@/service/ProfileService";
-import * as ImagePicker from "expo-image-picker"; // 👈 add ImagePicker
+import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
-import { Alert, Image } from "react-native"; // 👈 add Image
+import { Alert, View } from "react-native";
 import { FormActions, FormContainer, FormField } from "./FormContainer";
+import { ProfileAvatar } from "./ProfileAvatar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Text } from "./ui/text";
@@ -66,7 +67,6 @@ export function AuthForm() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  // 👇 local URI for the image the user picked (not the URL in storage)
   const [profileImageUri, setProfileImageUri] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
@@ -96,7 +96,7 @@ export function AuthForm() {
               username,
               firstName,
               lastName,
-              profileImageUri, // 👈 pass local image URI to service
+              profileImageUri,
             );
 
     await handleAuth(authAction);
@@ -112,7 +112,7 @@ export function AuthForm() {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: "images", // ← correct for Expo Image Picker 17
+        mediaTypes: "images",
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
@@ -145,20 +145,12 @@ export function AuthForm() {
         Humble
       </Text>
 
-      {/* 👇 Only show image picker UI in register mode */}
       {mode === "register" && (
         <>
           {profileImageUri && (
-            <Image
-              source={{ uri: profileImageUri }}
-              style={{
-                width: 120,
-                height: 120,
-                borderRadius: 60,
-                alignSelf: "center",
-                marginBottom: 12,
-              }}
-            />
+            <View style={{ alignItems: "center", marginBottom: 12 }}>
+              <ProfileAvatar uri={profileImageUri} size={120} />
+            </View>
           )}
 
           <Button

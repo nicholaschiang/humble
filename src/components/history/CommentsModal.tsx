@@ -44,8 +44,12 @@ export function CommentsModal({
   onCommentAdded,
 }: CommentsModalProps) {
   const session = useSession();
-  const [visitUserFullName, setVisitUserFullName] = useState<string | null>(null);
-  const [visitUserUsername, setVisitUserUsername] = useState<string | null>(null);
+  const [visitUserFullName, setVisitUserFullName] = useState<string | null>(
+    null,
+  );
+  const [visitUserUsername, setVisitUserUsername] = useState<string | null>(
+    null,
+  );
   const [comments, setComments] = useState<FormattedComment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -72,9 +76,9 @@ export function CommentsModal({
         gym_visit_id: addedCommentResponse.gym_visit_id,
       };
 
-    // insert newest comment at the top
-    setComments((prev) => [addedComment, ...prev]);
-    if (onCommentAdded) onCommentAdded();
+      // insert newest comment at the top
+      setComments((prev) => [addedComment, ...prev]);
+      if (onCommentAdded) onCommentAdded();
       setNewComment("");
     } catch (error) {
       console.error("Failed to add comment:", error);
@@ -102,8 +106,9 @@ export function CommentsModal({
           }),
         );
         // sort newest first
-        const sorted = formattedComments.sort((a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        const sorted = formattedComments.sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         );
         setComments(sorted);
       } catch (error) {
@@ -118,7 +123,10 @@ export function CommentsModal({
           return;
         }
         const profile = await getUserProfile(visit.user_id);
-        const full = [profile.first_name || "", profile.last_name || ""].filter(Boolean).join(" ") || userReadableName;
+        const full =
+          [profile.first_name || "", profile.last_name || ""]
+            .filter(Boolean)
+            .join(" ") || userReadableName;
         setVisitUserFullName(full);
         setVisitUserUsername(profile.username || null);
       } catch (error) {
@@ -136,7 +144,12 @@ export function CommentsModal({
     <Dialog open={visible} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <View style={{ position: "absolute", top: 8, right: 8, zIndex: 50 }}>
-          <Button variant="ghost" size="icon" onPress={onClose} accessibilityLabel="Close comments">
+          <Button
+            variant="ghost"
+            size="icon"
+            onPress={onClose}
+            accessibilityLabel="Close comments"
+          >
             <Text style={{ fontSize: 16, fontWeight: "700" }}>✕</Text>
           </Button>
         </View>
@@ -160,13 +173,20 @@ export function CommentsModal({
                     )}
                   </Text>
 
-                      <View className="mt-1">
-                        {setsMap[ex.id]?.map((set: Tables<"Set">, index: number) => (
-                          <Text key={index} className="text-sm text-muted-foreground">
-                            {index + 1}. Reps: {set.reps}, Weight: {set.weight}, Duration: {set.duration_sec}s, Distance: {set.distance_mi}mi
-                          </Text>
-                        ))}
-                      </View>
+                  <View className="mt-1">
+                    {setsMap[ex.id]?.map(
+                      (set: Tables<"Set">, index: number) => (
+                        <Text
+                          key={index}
+                          className="text-sm text-muted-foreground"
+                        >
+                          {index + 1}. Reps: {set.reps}, Weight: {set.weight},
+                          Duration: {set.duration_sec}s, Distance:{" "}
+                          {set.distance_mi}mi
+                        </Text>
+                      ),
+                    )}
+                  </View>
                 </View>
               ))}
             </View>
@@ -200,7 +220,9 @@ export function CommentsModal({
                 </View>
               ))
             ) : (
-              <Text className="text-sm text-muted-foreground">No comments yet.</Text>
+              <Text className="text-sm text-muted-foreground">
+                No comments yet.
+              </Text>
             )}
           </View>
         </ScrollView>

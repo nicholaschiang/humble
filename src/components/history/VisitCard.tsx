@@ -1,9 +1,11 @@
 import { Tables } from "@/lib/database.types";
 import { formatGymVisitDate, getExerciseTypeName } from "@/lib/workout-utils";
+import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { View } from "react-native";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
+import { AddLike, RemoveLike } from "@/service/SocialService";
 
 type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
@@ -65,6 +67,21 @@ export function VisitCard({
 }) {
   const [liked, setLiked] = useState(false);
 
+  const toggleLike = async () => {
+    if (!currentUserId) return;
+
+    try {
+      if (liked) {
+        await RemoveLike(currentUserId, visit.id);
+      } else {
+        await AddLike(currentUserId, visit.id);
+      }
+      setLiked(!liked);
+    } catch (error) {
+      console.error("Failed to toggle like:", error);
+    }
+  };
+
   return (
     <View
       key={visit.id}
@@ -106,17 +123,22 @@ export function VisitCard({
             onPress={() => {}}
             accessibilityLabel={`Open comments for visit ${visit.id}`}
           >
-            <Text className="text-foreground font-semibold mr-2">
-              💬 Comments
-            </Text>
+            <FontAwesome name="comment" size={16} color="#FFF" style={{ marginRight: 8 }} />
+            <Text className="text-foreground font-semibold">Comments</Text>
           </Button>
           <Button
             className="ml-2 bg-muted rounded-md px-3 py-2 flex-row items-center"
-            onPress={() => setLiked(!liked)}
+            onPress={toggleLike}
             accessibilityLabel={`Toggle like for visit ${visit.id}`}
           >
+            <FontAwesome
+              name={liked ? "thumbs-up" : "thumbs-o-up"}
+              size={16}
+              color="#FFF"
+              style={{ marginRight: 8 }}
+            />
             <Text className="text-foreground font-semibold">
-              {liked ? "👍" : "👍🏽"}
+              {liked ? "Liked!" : "Like"}
             </Text>
           </Button>
         </View>

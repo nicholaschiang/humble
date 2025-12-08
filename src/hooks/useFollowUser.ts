@@ -4,12 +4,11 @@ import {
   unfollowUser,
   isFollowingUser,
 } from "@/service/FollowService";
-//import { useAuth } from "@/hooks/useAuth"; // or whatever you use to get current user
+import { useSessionState } from "@/lib/session";
 
 export function useFollowUser(targetUserId: string) {
-  //   const { user } = useAuth(); // adjust to your actual auth hook/context
-  //   const currentUserId = user?.id ?? null;
-  const currentUserId = "2efcbe2e-ff99-4ed0-81e4-bd413a1d2d01"; // TODO: Replace with actual logged-in user ID
+  const { session } = useSessionState();
+  const currentUserId = session?.user.id ?? null;
 
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,7 +22,7 @@ export function useFollowUser(targetUserId: string) {
 
     async function fetchStatus() {
       try {
-        const following = await isFollowingUser(currentUserId, targetUserId);
+        const following = await isFollowingUser(currentUserId as string, targetUserId as string);
         if (!cancelled) {
           setIsFollowing(following);
         }

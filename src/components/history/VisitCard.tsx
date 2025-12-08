@@ -9,7 +9,6 @@ import {
   UserLikesGymVisit,
 } from "@/service/SocialService";
 import { FontAwesome } from "@expo/vector-icons";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { formatDistanceToNow } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -58,16 +57,6 @@ function DeleteVisitButton({
   );
 }
 
-type NavigationParams = NavigationProp<{
-  CommentsPage: {
-    visit: GymVisit;
-    exercises: Exercise[];
-    setsMap: Record<string, SetRow[]>;
-    exerciseTypes: any[];
-    userReadableName: string;
-  };
-}>;
-
 export function VisitCard({
   visit,
   exercises,
@@ -85,7 +74,6 @@ export function VisitCard({
   onDelete?: (id: string) => Promise<void>;
   currentUserId?: string | null;
 }) {
-  const navigation = useNavigation<NavigationParams>();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
@@ -98,7 +86,7 @@ export function VisitCard({
   );
 
   useEffect(() => {
-    const fetchCounts = async () => {
+    async function fetchCounts() {
       try {
         // always fetch totals
         const [likeCnt, commentCnt] = await Promise.all([
@@ -116,13 +104,13 @@ export function VisitCard({
       } catch (error) {
         console.error("Failed to fetch like/comment counts or status:", error);
       }
-    };
+    }
 
     fetchCounts();
   }, [currentUserId, visit.id]);
 
   useEffect(() => {
-    const fetchVisitUser = async () => {
+    async function fetchVisitUser() {
       try {
         if (!visit.user_id) {
           setVisitUserFullName(userReadableName);
@@ -135,15 +123,15 @@ export function VisitCard({
             .join(" ") || userReadableName;
         setVisitUserFullName(full);
         setVisitUserUsername(profile.username || null);
-      } catch (error) {
+      } catch {
         setVisitUserFullName(userReadableName);
       }
-    };
+    }
 
     fetchVisitUser();
   }, [visit.user_id, userReadableName]);
 
-  const toggleLike = async () => {
+  async function toggleLike() {
     if (!currentUserId) return;
 
     try {
@@ -158,7 +146,7 @@ export function VisitCard({
     } catch (error) {
       console.error("Failed to toggle like:", error);
     }
-  };
+  }
 
   return (
     <View

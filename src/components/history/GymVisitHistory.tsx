@@ -19,29 +19,6 @@ type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
 type SetRow = Tables<"Set">;
 
-function DeleteVisitButton({
-  onDelete,
-  visitId,
-}: {
-  onDelete: (id: string) => Promise<void>;
-  visitId: string;
-}) {
-  return (
-    <View style={{ position: "absolute", top: 8, right: 8, zIndex: 10 }}>
-      <Button
-        variant="ghost"
-        size="icon"
-        onPress={() => onDelete(visitId)}
-        accessibilityLabel={`Delete visit ${visitId}`}
-      >
-        <Text style={{ color: "#ef4444", fontWeight: "700", fontSize: 16 }}>
-          ✕
-        </Text>
-      </Button>
-    </View>
-  );
-}
-
 export function GymVisitHistory({ getGymVisits, title }: any) {
   const insets = useSafeAreaInsets();
   const [visits, setVisits] = useState<GymVisit[]>([]);

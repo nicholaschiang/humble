@@ -169,7 +169,7 @@ export function GymVisitHistory({ getGymVisits, title }: any) {
       <View
         className="px-2 pt-4"
         style={{
-          paddingTop: insets.top,
+          //paddingTop: insets.top,
           paddingBottom: insets.bottom + 60,
         }}
       >

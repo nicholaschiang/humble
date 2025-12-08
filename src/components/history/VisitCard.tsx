@@ -11,7 +11,13 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import {
+  View,
+  Pressable,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from "react-native";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
 import { CommentsModal } from "./CommentsModal";
@@ -19,6 +25,14 @@ import { CommentsModal } from "./CommentsModal";
 type GymVisit = Tables<"GymVisit">;
 type Exercise = Tables<"Exercise">;
 type SetRow = Tables<"Set">;
+
+// Enable LayoutAnimation on Android
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 function formatSetRows(sets: SetRow[]): string {
   if (!sets.length) return "No sets";
@@ -79,16 +93,16 @@ export function VisitCard({
   const [commentCount, setCommentCount] = useState(0);
   const [commentsVisible, setCommentsVisible] = useState(false);
   const [visitUserFullName, setVisitUserFullName] = useState<string | null>(
-    null,
+    null
   );
   const [visitUserUsername, setVisitUserUsername] = useState<string | null>(
-    null,
+    null
   );
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     async function fetchCounts() {
       try {
-        // always fetch totals
         const [likeCnt, commentCnt] = await Promise.all([
           GetLikeCountForGymVisit(visit.id),
           GetCommentCountForGymVisit(visit.id),
@@ -96,7 +110,6 @@ export function VisitCard({
         setLikeCount(likeCnt);
         setCommentCount(commentCnt);
 
-        // fetch whether current user liked this visit (only if we have a user)
         if (currentUserId) {
           const isLiked = await UserLikesGymVisit(currentUserId, visit.id);
           setLiked(isLiked);
@@ -116,6 +129,7 @@ export function VisitCard({
           setVisitUserFullName(userReadableName);
           return;
         }
+
         const profile = await getUserProfile(visit.user_id);
         const full =
           [profile.first_name || "", profile.last_name || ""]
@@ -142,37 +156,66 @@ export function VisitCard({
         await AddLike(currentUserId, visit.id);
         setLikeCount((prev) => prev + 1);
       }
-      setLiked(!liked);
+      setLiked((prev) => !prev);
     } catch (error) {
       console.error("Failed to toggle like:", error);
     }
   }
 
+  function handleToggleExpanded() {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpanded((prev) => !prev);
+  }
+
+  const displayName = `${visitUserFullName ?? userReadableName}${
+    visitUserUsername ? ` (${visitUserUsername})` : ""
+  }`;
+
   return (
     <View
       key={visit.id}
       className="mb-4 bg-card rounded-md overflow-hidden"
-      style={{ borderWidth: 2, borderColor: "#0f1724", position: "relative" }}
+      style={{
+        borderWidth: 2,
+        borderColor: "#0f1724",
+        position: "relative",
+        backgroundColor: "#161618ff",
+      }}
     >
       {onDelete && currentUserId && currentUserId === visit.user_id && (
         <DeleteVisitButton onDelete={onDelete} visitId={visit.id} />
       )}
-      <View className="p-4">
-        <Text>
-          <Text className="text-2xl font-semibold">
-            {`${visitUserFullName ?? userReadableName}${visitUserUsername ? ` (${visitUserUsername})` : ""}`}
-          </Text>
-          <Text className="text-sm text-muted-foreground">{` • ${formatDistanceToNow(new Date(visit.created_at), { addSuffix: true })}`}</Text>
-        </Text>
 
-        {exercises.length > 0 && (
+      <View className="p-4">
+        {/* HEADER: name + time + arrow (tap to expand/collapse) */}
+        <Pressable
+          onPress={handleToggleExpanded}
+          className="flex-row items-center justify-between"
+        >
+          <View className="flex-1 mr-2">
+            <Text className="text-2xl font-semibold">{displayName}</Text>
+            <Text className="text-sm text-muted-foreground">{`${formatDistanceToNow(
+              new Date(visit.created_at),
+              { addSuffix: true }
+            )}`}</Text>
+          </View>
+
+          <FontAwesome
+            name={expanded ? "chevron-up" : "chevron-down"}
+            size={18}
+            color="#FFF"
+          />
+        </Pressable>
+
+        {/* DETAILS: only when expanded */}
+        {expanded && exercises.length > 0 && (
           <View className="mt-4 border-t border-border pt-4">
             {exercises.map((ex) => (
               <View key={ex.id} className="mb-3">
                 <Text className="text-lg font-semibold">
                   {getExerciseTypeName(
                     ex.exercise_type_id || "",
-                    exerciseTypes,
+                    exerciseTypes
                   )}
                 </Text>
 
@@ -183,6 +226,8 @@ export function VisitCard({
             ))}
           </View>
         )}
+
+        {/* Likes / Comments — bottom of card */}
         <View className="mt-4 flex-row items-center">
           <Button
             className="bg-muted rounded-md px-3 py-2 flex-row items-center"
@@ -200,6 +245,7 @@ export function VisitCard({
             />
             <Text className="text-foreground font-semibold">Comments</Text>
           </Button>
+
           <Button
             className="ml-2 bg-muted rounded-md px-3 py-2 flex-row items-center"
             onPress={toggleLike}
@@ -220,6 +266,7 @@ export function VisitCard({
           </Button>
         </View>
       </View>
+
       <CommentsModal
         visible={commentsVisible}
         onClose={() => setCommentsVisible(false)}
